@@ -1,0 +1,50 @@
+* { font: 17px Calibri; }
+
+.mainContainer {
+    position: relative;
+    padding: 0;
+    /*min-width: 250px;
+    min-height: 250px;inline-*/
+    display: block;
+    margin: 0 auto;
+}
+
+img {border: none; max-width: 100%;}
+
+#textArea {
+    display: block;
+    padding: 10px 5px;
+}
+
+.textstyle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #000;
+    background: rgba(0, 0, 0, 0.1);
+    color: #fff;
+    width: auto;
+    padding: 5px;
+    text-align: left;
+    border: dashed 2px #ff7f27;
+    font: 15px Calibri;
+    display: block;
+    cursor: move;
+}
+
+.highlight {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #000;
+    background: rgba(0, 0, 0, 0.1);
+    color: #fff;
+    width: auto;
+    padding: 5px;
+    text-align: left;
+    border: dashed 4px #00db8b;
+    font: 15px Calibri;
+    display: block;
+    cursor: move;
+}
+canvas {max-width: 100%;}
