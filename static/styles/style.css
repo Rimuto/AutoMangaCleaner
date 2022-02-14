@@ -47,4 +47,6 @@ img {border: none; max-width: 100%;}
     display: block;
     cursor: move;
 }
-canvas {max-width: 100%;}
+canvas {
+    border: 2px solid green;
+}
