@@ -1,52 +1,110 @@
-* { font: 17px Calibri; }
-
-.mainContainer {
-    position: relative;
-    padding: 0;
-    /*min-width: 250px;
-    min-height: 250px;inline-*/
-    display: block;
-    margin: 0 auto;
+*{
+        user-select: none;
+        -moz-user-select: none;
+        -khtml-user-select: none;
+        -webkit-user-select: none;
+        -o-user-select: none;
+}
+html,
+body {
+  height: 100%;
+  margin: 0;
 }
 
-img {border: none; max-width: 100%;}
-
-#textArea {
-    display: block;
-    padding: 10px 5px;
+.box {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
 }
 
-.textstyle {
-    position: absolute;
-    top: 0;
-    left: 0;
-    background: #000;
-    background: rgba(0, 0, 0, 0.1);
-    color: #fff;
-    width: auto;
-    padding: 5px;
-    text-align: left;
-    border: dashed 2px #ff7f27;
-    font: 15px Calibri;
-    display: block;
-    cursor: move;
+/*.box .row {
+  border: 1px dotted #0313fc;
+}*/
+
+.box .row.header {
+  flex: 0 1 auto;
 }
 
-.highlight {
-    position: absolute;
-    top: 0;
-    left: 0;
-    background: #000;
-    background: rgba(0, 0, 0, 0.1);
-    color: #fff;
-    width: auto;
-    padding: 5px;
-    text-align: left;
-    border: dashed 4px #00db8b;
-    font: 15px Calibri;
-    display: block;
-    cursor: move;
+.box .row.content {
+  margin:0 100px 0 100px;
+  flex: 1 1 auto;
+}
+
+.box .row.footer {
+  flex: 0 0 50px;
+}
+.box .row.footer > center > span:hover
+{
+    background-color: #fec8d8;
+    text-decoration:underline;
 }
 canvas {
     border: 2px solid green;
+}
+
+.bi {
+    font-size: 25px;
+}
+.label {
+    color: black;
+    font-size: 18px;
+    margin-right: 1px;
+}
+
+.group {
+  padding: 0.25em;
+  display: block;
+  float: left;
+}
+
+body > .group{
+    margin-left: 1px;
+    margin-right: 5px;
+}
+
+.sample-toolbar
+{
+    border:solid 1px #ddd;
+    background:#f4f4f4;
+    padding: 15px;
+
+    border-radius:3px;
+}
+
+.sample-toolbar > span
+{
+    padding: 5px;
+    cursor:pointer;
+}
+
+.sample-toolbar > input
+{
+    padding: 5px;
+    cursor:pointer;
+}
+
+.sample-toolbar > select
+{
+    margin-left: 1px;
+    margin-right: 10px;
+    padding: 5px;
+    cursor:pointer;
+}
+
+.sample-toolbar > center > span:hover
+{
+    background-color: #fec8d8;
+    text-decoration:underline;
+}
+
+.red
+{
+    background-color:red;
+}
+
+.bi-arrow-left-square {
+    font-size: 40px;
+}
+.bi-arrow-right-square {
+    font-size: 40px;
 }

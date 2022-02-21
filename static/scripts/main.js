@@ -1,4 +1,56 @@
 $(function() {
+$(document).ready(function() {
+    const element = document.getElementById('panzoom')
+    panzoom(element, {
+        maxZoom: 10,
+        minZoom: 0.5,
+        zoomDoubleClickSpeed: 1,
+        onDoubleClick: function(e) {
+            return false;
+         },
+        beforeMouseDown: function(e) {
+            var shouldIgnore = !e.altKey;
+            return shouldIgnore;
+        }
+    });
+});
+
+
+
+// This demo binds to shift + wheel
+
+
+//var wheelTimeoutHandler = null;
+//var wheelTimeout = 250; //ms;
+/*function zoomWithWheel(event) {
+    panzoom.zoomWithWheel(event)
+    clearTimeout(wheelTimeoutHandler);
+    wheelTimeoutHandler = setTimeout(function() {
+        canvas.style.transform = "scale("+1/panzoom.getScale()+")"
+        if (pdfDoc)
+            renderPage(panzoom.getScale());
+    }, wheelTimeout)
+};
+var element = document.getElementById('panzoom');
+const panzoom = Panzoom(element, {
+	bound:'outer',
+	excludeClass: 'textblck',
+	beforeMouseDown: function(e){
+            // allow mouse-down panning only if altKey is down. Otherwise - ignore
+            var shouldIgnore = !e.altKey;
+            return shouldIgnore;
+        }
+});*/
+
+/*var panzoom = panzoom(element,{
+    beforeMouseDown: function(e){
+            // allow mouse-down panning only if altKey is down. Otherwise - ignore
+            var shouldIgnore = !e.altKey;
+            return shouldIgnore;
+        }
+});*/
+//element.parentElement.addEventListener('wheel', zoomWithWheel)
+
 
 var id = 0;
 var selected_div;
@@ -79,6 +131,8 @@ function moveSelected(direction) {
 
 var canvas = new fabric.Canvas("canvas");
 canvas.on('text:selection:changed', onSelectionChanged);
+
+/*
 canvas.on('mouse:down', function(opt) {
   var evt = opt.e;
   if (evt.altKey === true) {
@@ -116,9 +170,7 @@ canvas.on('mouse:wheel', function(opt) {
   opt.e.preventDefault();
   opt.e.stopPropagation();
 });
-
-
-
+*/
 
 
 $( "#delete" ).click(function() {
@@ -164,14 +216,24 @@ $( "#add" ).click(function() {
     canvas.renderAll();
 });
 
-$("#angle").on("change", function() {
+
+$("#lineHeight").on("input", function() {
+  var obj = canvas.getActiveObject();
+  if (obj) {
+    setStyle(obj, 'lineHeight', $("#lineHeight").val());
+    canvas.renderAll();
+  }
+});
+
+
+$("#angle").on("input", function() {
   if (canvas.getActiveObjects().length > 0){
     canvas.getActiveObject().set("angle", $("#angle").val());
     canvas.renderAll();
     }
 });
 
-$("#font-family").on("change", function() {
+$("#font-family").on("input", function() {
   var obj = canvas.getActiveObject();
   if (obj) {
     setStyle(obj, 'fontFamily', $("#font-family").val());
@@ -188,13 +250,93 @@ $("#text-color").on("input", function() {
 });
 
 
-$("#text-font-size").on("change", function() {
+$("#text-font-size").on("input", function() {
   var obj = canvas.getActiveObject();
   if (obj) {
     setStyle(obj, 'fontSize', $("#text-font-size").val());
     canvas.renderAll();
   }
 });
+
+$("#text-align-left").on("click", function() {
+  var obj = canvas.getActiveObject();
+  if (obj) {
+    setStyle(obj, 'textAlign', "left");
+    canvas.renderAll();
+  }
+});
+
+$("#text-align-right").on("click", function() {
+  var obj = canvas.getActiveObject();
+  if (obj) {
+    setStyle(obj, 'textAlign', "right");
+    canvas.renderAll();
+  }
+});
+
+$("#text-align-center").on("click", function() {
+  var obj = canvas.getActiveObject();
+  if (obj) {
+    setStyle(obj, 'textAlign', "center");
+    canvas.renderAll();
+  }
+});
+
+$("#text-align-justify").on("click", function() {
+  var obj = canvas.getActiveObject();
+  if (obj) {
+    setStyle(obj, 'textAlign', "justify");
+    canvas.renderAll();
+  }
+});
+
+$("#bold").on("click", function() {
+  var obj = canvas.getActiveObject();
+  if (obj) {
+      var isBold= getStyle(obj, "fontWeight");
+      if( isBold != "bold"){
+        setStyle(obj, 'fontWeight', "bold");
+        canvas.renderAll();
+      }else{
+        setStyle(obj, 'fontWeight', "normal");
+        canvas.renderAll();
+      }
+  }
+});
+
+$("#italic").on("click", function() {
+  var obj = canvas.getActiveObject();
+  if (obj) {
+      var isItalic= getStyle(obj, "fontStyle");
+      if( isItalic != "italic"){
+        setStyle(obj, 'fontStyle', "italic");
+        canvas.renderAll();
+      }else{
+        setStyle(obj, 'fontStyle', "normal");
+        canvas.renderAll();
+      }
+  }
+});
+
+$("#underline").on("click", function() {
+  var obj = canvas.getActiveObject();
+  if (obj) {
+      var isUnderline= getStyle(obj, "underline");
+      if(isUnderline != "underline"){
+        setStyle(obj, 'underline', "underline");
+        canvas.renderAll();
+      }else{
+        setStyle(obj, 'underline', "");
+        canvas.renderAll();
+      }
+  }
+});
+
+
+function getStyle(object, styleName) {
+  return (object.getStyleAtPosition && object.isEditing) ?
+    object.getStyleAtPosition(object.selectionStart)[styleName] : object[styleName];
+}
 
 
 function setStyle(object, styleName, value) {
@@ -204,7 +346,6 @@ function setStyle(object, styleName, value) {
     object.setSelectionStyles(style);
   } else {
     object[styleName] = value;
-
   }
 }
 
@@ -214,14 +355,6 @@ function onSelectionChanged() {
     $('#fontSize').val(getStyle(obj, 'fontSize'));
   }
 }
-
-function getStyle(object, styleName) {
-  return (object.getStyleAtPosition && object.isEditing) ?
-    object.getStyleAtPosition(object.selectionStart)[styleName] : object[styleName];
-}
-
-
-
 
 
 var createImage = function(src, title) {
@@ -234,31 +367,121 @@ var createImage = function(src, title) {
 
 // array of images
 var images = [];
+var canvas_arr = {};
 var current = 0;
 var max = 0;
 
+function isObjectEmpty(value) {
+     return (
+         Object.prototype.toString.call(value) === '[object Object]' && JSON.stringify(value) === '{}'
+     );
+}
+
+$('#save').on({
+    'click': function(){
+        this.href = canvas.toDataURL({
+            format: 'png',
+            quality: 0.8
+        });
+        this.download = 'custom.png';
+    }
+});
+
+/*for the save*/
+
 $('#next').on({
     'click': function(){
+        event.preventDefault();
+        canvas_arr[current] = canvas.toObject();
         if (current + 1 > max){
             current = 0
         }
         else{
             current = current + 1;}
-        $('#myimage').attr('src', images[current].src);
+        canvas.clear();
+        if (current in canvas_arr){
+            canvas.loadFromJSON(canvas_arr[current], canvas.renderAll.bind(canvas));
+            canvas.setDimensions({width:canvas_arr[current].backgroundImage.width, height:canvas_arr[current].backgroundImage.height});
+        }
+        else{
+            fabric.Image.fromURL(images[current].src, function(img) {
+                canvas.setDimensions({width:img.width, height:img.height});
+                canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
+            });
+        }
+        //canvas.loadFromJSON(canvas_arr[current], canvas.renderAll.bind(canvas));
+        //$('#myimage').attr('src', images[current].src);
     }
 });
 
 $('#prev').on({
     'click': function(){
+        event.preventDefault();
+        canvas_arr[current] = canvas.toObject();
         if (current - 1 < 0){
             current = max
         } else {
             current = current - 1;}
-        $('#myimage').attr('src', images[current].src);
+
+        canvas.clear();
+        if (current in canvas_arr){
+            canvas.loadFromJSON(canvas_arr[current], canvas.renderAll.bind(canvas));
+            canvas.setDimensions({width:canvas_arr[current].backgroundImage.width, height:canvas_arr[current].backgroundImage.height});
+        }
+        else{
+            fabric.Image.fromURL(images[current].src, function(img) {
+                canvas.setDimensions({width:img.width, height:img.height});
+                canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
+            });
+        }
     }
 });
 
-$('#upload-file-btn').click(function() {
+var brush = canvas.freeDrawingBrush;
+
+$('#draw').on({
+    'click': function(){
+        canvas.isDrawingMode = !canvas.isDrawingMode;
+        if (canvas.isDrawingMode) {
+          $(this).toggleClass('red');
+        }
+        else {
+          $(this).toggleClass('red');
+        }
+  }
+});
+
+$('#brush-color').on({
+    'change': function() {
+        brush.color = this.value;
+    }
+});
+
+
+$('#brush-size').on({
+    'change': function() {
+        brush.width = parseInt(this.value, 10) || 1;
+        this.previousSibling.innerHTML = this.value;
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+$('#upload-file').change(function() {
     var form_data = new FormData($('#upload-file')[0]);
     $.ajax({
         type: 'POST',
@@ -274,11 +497,10 @@ $('#upload-file-btn').click(function() {
                 images.push(createImage('data:image/png;base64,' + data[k].img, k));
                 max = k;
             }
-             fabric.Image.fromURL(images[0].src, function(img) {
-                 canvas.setDimensions({width:img.width*2, height:img.height*2});
-                 // add background image
+            fabric.Image.fromURL(images[0].src, function(img) {
+                 canvas.setDimensions({width:img.width, height:img.height});
                  canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
-              });
+            });
         },
     });
 });
