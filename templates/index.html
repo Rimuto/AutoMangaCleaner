@@ -21,6 +21,7 @@
             <center>
                 <input type="button" id = "delete" value="Delete" />
                 <input type="button" id = "add" value="add" />
+                <input type="button" id = "toFront" value = "bringToFront"></input>
                 <label for="angle">Angle:</label>
                 <input type="number" min="-360" max="360" id="angle" value="0">
                 <span id = "bold" class="bi bi-type-bold"></span>
@@ -110,26 +111,28 @@
         <input type="number" min="-360" max="360" id="angle" value="0">
     </center>
 </div>-->
-    <div class="row content" style="overflow: auto;"  >
-        <div id = "panzoom">
-            <canvas onkeydown="onKeyDown" id="canvas"
-                    width="1280"
-                    height="720">
-            </canvas>
+    <div class="row content" style="overflow: auto;">
+        <div class="menu" id = "menu" style="overflow: auto;">
+
+        </div>
+        <div class = "row content canvas" style="overflow: auto;">
+            <div id = "panzoom">
+                <canvas onkeydown="onKeyDown" id="canvas"
+                        width="1280"
+                        height="720">
+                </canvas>
+            </div>
         </div>
     </div>
-
-<div class = "row footer">
-    <center>
-        <span id="prev" class="bi bi-arrow-left-square"></span>
-        <span id="next" class="bi bi-arrow-right-square"></span>
-        <!--<button id="prev">Prev</button>
-        <button id="next">Next</button>-->
-        <a id="save" href="#">
-            <button>Save</button>
-        </a>
-    </center>
-</div>
+    <div class = "row footer">
+        <center>
+            <span id="prev" class="bi bi-arrow-left-square"></span>
+            <span id="next" class="bi bi-arrow-right-square"></span>
+            <a id="save" href="#">
+                <button>Save</button>
+            </a>
+        </center>
+    </div>
 </div>
 </div>
 </body>

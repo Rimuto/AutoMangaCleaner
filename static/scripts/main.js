@@ -50,7 +50,11 @@ const panzoom = Panzoom(element, {
         }
 });*/
 //element.parentElement.addEventListener('wheel', zoomWithWheel)
-
+var ctrlDown = false,
+    ctrlKey = 17,
+    cmdKey = 91,
+    vKey = 86,
+    cKey = 67;
 
 var id = 0;
 var selected_div;
@@ -216,6 +220,10 @@ $( "#add" ).click(function() {
     canvas.renderAll();
 });
 
+$("#toFront").click(function(){
+    var activeObj = canvas.getActiveObject();
+    activeObj && canvas.bringToFront(activeObj).discardActiveObject(activeObj).renderAll();
+});
 
 $("#lineHeight").on("input", function() {
   var obj = canvas.getActiveObject();
@@ -365,9 +373,19 @@ var createImage = function(src, title) {
   return img;
 };
 
+var createOrigImage = function(x, y, src, title) {
+  var img   = new Image();
+  checked = false;
+  img.src   = src;
+  img.alt   = title;
+  img.title = title;
+  return [ x, y, img, checked];
+};
+
 // array of images
 var images = [];
 var canvas_arr = {};
+var original_arr = {};
 var current = 0;
 var max = 0;
 
@@ -393,12 +411,27 @@ $('#next').on({
     'click': function(){
         event.preventDefault();
         canvas_arr[current] = canvas.toObject();
+
         if (current + 1 > max){
             current = 0
         }
         else{
             current = current + 1;}
         canvas.clear();
+
+        if (current in original_arr){
+            $("#menu").empty();
+            for(var i in original_arr[current]){
+                if (original_arr[current][i][3]){
+                    var myNewElement = $("<li><input class = \"origs\" type=\"checkbox\" id=\"" + i + "\" checked/><label for=\"" + i + "\"><img src=\"" + original_arr[current][i][2].src + "\"/></label></li>");
+
+                }else{
+                    var myNewElement = $("<li><input class = \"origs\" type=\"checkbox\" id=\"" + i + "\"/><label for=\"" + i + "\"><img src=\"" + original_arr[current][i][2].src + "\"/></label></li>");
+                }
+                myNewElement.appendTo('#menu')
+            }
+        }
+
         if (current in canvas_arr){
             canvas.loadFromJSON(canvas_arr[current], canvas.renderAll.bind(canvas));
             canvas.setDimensions({width:canvas_arr[current].backgroundImage.width, height:canvas_arr[current].backgroundImage.height});
@@ -422,8 +455,21 @@ $('#prev').on({
             current = max
         } else {
             current = current - 1;}
-
         canvas.clear();
+
+        if (current in original_arr){
+            $("#menu").empty();
+            for(var i in original_arr[current]){
+                if (original_arr[current][i][3]){
+                    var myNewElement = $("<li><input class = \"origs\" type=\"checkbox\" id=\"" + i + "\" checked/><label for=\"" + i + "\"><img src=\"" + original_arr[current][i][2].src + "\"/></label></li>");
+
+                }else{
+                    var myNewElement = $("<li><input class = \"origs\" type=\"checkbox\" id=\"" + i + "\"/><label for=\"" + i + "\"><img src=\"" + original_arr[current][i][2].src + "\"/></label></li>");
+                }
+                myNewElement.appendTo('#menu')
+            }
+        }
+
         if (current in canvas_arr){
             canvas.loadFromJSON(canvas_arr[current], canvas.renderAll.bind(canvas));
             canvas.setDimensions({width:canvas_arr[current].backgroundImage.width, height:canvas_arr[current].backgroundImage.height});
@@ -466,20 +512,115 @@ $('#brush-size').on({
 });
 
 
+function Copy() {
+	canvas.getActiveObject().clone(function(cloned) {
+		_clipboard = cloned;
+	});
+}
+
+function Paste() {
+	// clone again, so you can do multiple copies.
+	_clipboard.clone(function(clonedObj) {
+		canvas.discardActiveObject();
+		clonedObj.set({
+		    lockScalingY: true,
+            lockUniScaling: true,
+			left: clonedObj.left + 10,
+			top: clonedObj.top + 10,
+			evented: true,
+		});
+		if (clonedObj.type === 'activeSelection') {
+			// active selection needs a reference to the canvas.
+			clonedObj.canvas = canvas;
+			clonedObj.forEachObject(function(obj) {
+				canvas.add(obj);
+			});
+			// this should solve the unselectability
+			clonedObj.setCoords();
+		} else {
+			canvas.add(clonedObj);
+		}
+		_clipboard.top += 10;
+		_clipboard.left += 10;
+		canvas.setActiveObject(clonedObj);
+		canvas.requestRenderAll();
+	});
+}
+$(document).keydown(function(e) {
+        if (e.keyCode == ctrlKey || e.keyCode == cmdKey) ctrlDown = true;
+    }).keyup(function(e) {
+        if (e.keyCode == ctrlKey || e.keyCode == cmdKey) ctrlDown = false;
+    });
+
+
+$(document).keydown(function(e) {
+        obj = canvas.getActiveObject();
+        if (ctrlDown && (e.keyCode == cKey)){
+            //console.log(canvas.getActiveObject());
+            if (obj){
+                if (!obj.isEditing) {
+                    Copy();
+                }
+            }
+        };
+        if (ctrlDown && (e.keyCode == vKey)){
+            if (obj){
+                if (!obj.isEditing) {
+                    Paste();
+                }
+            }
+        };
+});
+
+
+fabric.Canvas.prototype.getItemByName = function(name) {
+  var object = null,
+      objects = this.getObjects();
+
+  for (var i = 0, len = this.size(); i < len; i++) {
+    if (objects[i].name && objects[i].name === name) {
+      object = objects[i];
+      break;
+    }
+  }
+
+  return object;
+};
+
+$(document).on('change', '.origs', function(){
+    let selectedid = $(this).attr('id');
+    let isAChecked = $(this).prop("checked");
+
+    original_arr[current][selectedid][3] = isAChecked;
+    var x = original_arr[current][selectedid][0];
+    var y = original_arr[current][selectedid][1];
+    if (isAChecked){
+        fabric.Image.fromURL(original_arr[current][selectedid][2].src, (image) => {
+            const left = x ,
+                  top = y ;
+            image.set({
+                name: selectedid,
+                left: left,
+                top: top,
+                stroke: 0,
+                padding: 0,
+                centeredScaling: true,
+                hasControls: false,
+                strokeWidth: 0,
+                hasBorders: 0,
+                selectable: false,
+                evented: false
+            });
+            canvas.add(image);
+        });
+    }else{
+        original = canvas.getItemByName(selectedid);
+        canvas.remove(original);
+    }
 
 
 
-
-
-
-
-
-
-
-
-
-
-
+});
 
 $('#upload-file').change(function() {
     var form_data = new FormData($('#upload-file')[0]);
@@ -493,10 +634,21 @@ $('#upload-file').change(function() {
         success: function(data) {
             images = [];
             for(var k in data) {
-                console.log(k, data[k]);
-                images.push(createImage('data:image/png;base64,' + data[k].img, k));
+                images.push(createImage('data:image/png;base64,' + data[k].pack.img, k));
                 max = k;
+                origs= [];
+                for(var i in data[k].pack.cleaned){
+                    origs.push(createOrigImage(data[k].pack.cleaned[i][0], data[k].pack.cleaned[i][1], 'data:image/png;base64,' + data[k].pack.cleaned[i][2], i))
+                }
+                original_arr[k] = origs;
             }
+
+            var src = document.getElementById("menu");
+            for(var i in original_arr[0]){
+                var myNewElement = $("<li><input class = \"origs\" type=\"checkbox\" id=\"" + i + "\"/><label for=\"" + i + "\"><img src=\"" + original_arr[0][i][2].src + "\"/></label></li>");
+                myNewElement.appendTo('#menu')
+            }
+            console.log($("input[class='origs']").length)
             fabric.Image.fromURL(images[0].src, function(img) {
                  canvas.setDimensions({width:img.width, height:img.height});
                  canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
