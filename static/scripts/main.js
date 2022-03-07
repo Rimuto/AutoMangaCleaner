@@ -58,6 +58,9 @@ var ctrlDown = false,
 
 var id = 0;
 var selected_div;
+var canvas = new fabric.Canvas("canvas");
+
+
 
 const STEP = 1;
 var Direction = {
@@ -133,7 +136,7 @@ function moveSelected(direction) {
 
 }
 
-var canvas = new fabric.Canvas("canvas");
+
 canvas.on('text:selection:changed', onSelectionChanged);
 
 /*
@@ -410,7 +413,7 @@ $('#save').on({
 $('#next').on({
     'click': function(){
         event.preventDefault();
-        canvas_arr[current] = canvas.toObject();
+        canvas_arr[current] = canvas.toObject(['name', 'selectable', 'evented']);
 
         if (current + 1 > max){
             current = 0
@@ -450,7 +453,7 @@ $('#next').on({
 $('#prev').on({
     'click': function(){
         event.preventDefault();
-        canvas_arr[current] = canvas.toObject();
+        canvas_arr[current] = canvas.toObject(['name', 'selectable', 'evented']);
         if (current - 1 < 0){
             current = max
         } else {
@@ -617,9 +620,6 @@ $(document).on('change', '.origs', function(){
         original = canvas.getItemByName(selectedid);
         canvas.remove(original);
     }
-
-
-
 });
 
 $('#upload-file').change(function() {
