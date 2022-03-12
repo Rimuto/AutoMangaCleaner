@@ -30,14 +30,14 @@ body {
   justify-content: flex-start;
   /*flex-direction: row;*/
   flex-flow: row;
-  border-style: solid;
-  /*margin:0 100px 0 100px;*/
+  /*border-style: solid;
+  margin:0 100px 0 100px;*/
   flex: 1 1 auto;
 }
 
 .box .row.content.canvas {
-  border-style: solid;
-  /*margin:0 100px 0 100px;*/
+  /*border-style: solid;
+  margin:0 100px 0 100px;*/
   flex: 1 1 auto;
 }
 
@@ -45,8 +45,8 @@ body {
   width: 200px;
   display: inline-block;
   /*height: 100px;*/
-  border-style: solid;
-  /*flex: 1 1 100px;*/
+  /*border-style: solid;
+  flex: 1 1 100px;*/
 }
 .menu > img{
   border: 2px solid green;
