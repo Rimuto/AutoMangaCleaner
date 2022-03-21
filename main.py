@@ -3,8 +3,7 @@ from flask import Flask, request, redirect, url_for, render_template, send_from_
 import detect
 import cv2
 import clean
-from zipfile import ZipFile
-import json
+
 import base64
 import numpy as np
 
