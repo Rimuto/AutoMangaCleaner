@@ -16,6 +16,10 @@ app.config["SECRET_KEY"] = "SECRET_KEY"
 DOWNLOAD_FOLDER = os.path.dirname(os.path.abspath(__file__)) + '\\downloads\\'
 app.config['DOWNLOAD_FOLDER'] = DOWNLOAD_FOLDER
 ALLOWED_EXTENSIONS = {'jpg', 'png'}
+
+CFG = detect.config(cfgpath)
+Weights = detect.weights(wpath)
+nets = detect.load_model(CFG, Weights)
 #new comment for deploy heroku2
 
 def allowed_file(filename):
@@ -33,9 +37,6 @@ def get_path(filename):
 @app.route("/uploadajax", methods=[ "GET",'POST'])
 def uploadajax():
     files = request.files.getlist("file")
-    CFG = detect.config(cfgpath)
-    Weights = detect.weights(wpath)
-    nets = detect.load_model(CFG, Weights)
     data = {}
     for i, file in zip(range(len(files)),files):
         if file.filename == '':
