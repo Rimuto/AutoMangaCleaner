@@ -29,6 +29,7 @@ def get_base64_encoded_image(image_path):
 def get_path(filename):
     return os.path.join("./" + filename)
 
+
 @app.route("/uploadajax", methods=[ "GET",'POST'])
 def uploadajax():
     files = request.files.getlist("file")
