@@ -16,7 +16,7 @@ app.config["SECRET_KEY"] = "SECRET_KEY"
 DOWNLOAD_FOLDER = os.path.dirname(os.path.abspath(__file__)) + '\\downloads\\'
 app.config['DOWNLOAD_FOLDER'] = DOWNLOAD_FOLDER
 ALLOWED_EXTENSIONS = {'jpg', 'png'}
-#new comment for deploy heroku
+#new comment for deploy heroku2
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
