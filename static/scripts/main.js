@@ -515,8 +515,8 @@ var mousecursor = new fabric.Circle({
   radius: canvas.freeDrawingBrush.width / 2,
   fill: "rgba(255,255,255," + cursorOpacity + ")",
   stroke: "black",
-  originX: 'center',
-  originY: 'center'
+        originX: 'center',
+        originY: 'center'
 });
 
 
