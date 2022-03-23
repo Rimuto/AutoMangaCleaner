@@ -72,7 +72,7 @@ body {
     background-color: #fec8d8;
     text-decoration:underline;
 }
-canvas {
+#canvas {
     border: 2px solid green;
 }
 
@@ -219,4 +219,12 @@ body > .group{
   transform: scale(0.9);
   box-shadow: 0 0 5px #333;
   z-index: -1;
+}
+
+#panzoom canvas, .canvas-container {
+  position: absolute!important;
+}
+
+#cursor {
+  pointer-events: none!important;
 }

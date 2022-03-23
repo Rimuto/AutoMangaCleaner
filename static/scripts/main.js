@@ -9,8 +9,12 @@ $(document).ready(function() {
             return false;
          },
         beforeMouseDown: function(e) {
+            //canvas.isDrawingMode = !canvas.isDrawingMode;
             var shouldIgnore = !e.altKey;
-            return shouldIgnore;
+              return shouldIgnore;
+        },
+        afterMouseDown: function(e) {
+            //canvas.isDrawingMode = !canvas.isDrawingMode;
         }
     });
 });
@@ -54,12 +58,13 @@ var ctrlDown = false,
     ctrlKey = 17,
     cmdKey = 91,
     vKey = 86,
-    cKey = 67;
-
+    cKey = 67,
+    altKey = 18,
+    isDraw = false;
 var id = 0;
 var selected_div;
-var canvas = new fabric.Canvas("canvas");
-
+var canvas = new fabric.Canvas("canvas", {freeDrawingCursor: 'none'});
+var cursor = new fabric.StaticCanvas("cursor");
 
 
 const STEP = 1;
@@ -133,9 +138,7 @@ function moveSelected(direction) {
     } else {
         console.log('no object selected');
     }
-
 }
-
 
 canvas.on('text:selection:changed', onSelectionChanged);
 
@@ -438,10 +441,12 @@ $('#next').on({
         if (current in canvas_arr){
             canvas.loadFromJSON(canvas_arr[current], canvas.renderAll.bind(canvas));
             canvas.setDimensions({width:canvas_arr[current].backgroundImage.width, height:canvas_arr[current].backgroundImage.height});
+            cursor.setDimensions({width:canvas_arr[current].backgroundImage.width, height:canvas_arr[current].backgroundImage.height});
         }
         else{
             fabric.Image.fromURL(images[current].src, function(img) {
                 canvas.setDimensions({width:img.width, height:img.height});
+                cursor.setDimensions({width:img.width, height:img.height});
                 canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
             });
         }
@@ -476,10 +481,12 @@ $('#prev').on({
         if (current in canvas_arr){
             canvas.loadFromJSON(canvas_arr[current], canvas.renderAll.bind(canvas));
             canvas.setDimensions({width:canvas_arr[current].backgroundImage.width, height:canvas_arr[current].backgroundImage.height});
+            cursor.setDimensions({width:canvas_arr[current].backgroundImage.width, height:canvas_arr[current].backgroundImage.height});
         }
         else{
             fabric.Image.fromURL(images[current].src, function(img) {
                 canvas.setDimensions({width:img.width, height:img.height});
+                cursor.setDimensions({width:img.width, height:img.height});
                 canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
             });
         }
@@ -488,21 +495,78 @@ $('#prev').on({
 
 var brush = canvas.freeDrawingBrush;
 
+var mousecursor = new fabric.Circle({
+  left: 0,
+  top: 0,
+  radius: canvas.freeDrawingBrush.width / 2,
+  fill: canvas.freeDrawingBrush.colors,
+  originX: 'right',
+  originY: 'bottom',
+})
+
+canvas.freeDrawingBrush.width = 10;
+canvas.freeDrawingBrush.color = "black";
+
+var cursorOpacity = .5;
+//create cursor and place it off screen
+var mousecursor = new fabric.Circle({
+  left: -100,
+  top: -100,
+  radius: canvas.freeDrawingBrush.width / 2,
+  fill: "rgba(255,255,255," + cursorOpacity + ")",
+  stroke: "black",
+  originX: 'center',
+  originY: 'center'
+});
+
+
+canvas.on('mouse:move', function (evt) {
+    if (canvas.isDrawingMode){
+        var mouse = this.getPointer(evt.e);
+        mousecursor.set({
+          top: mouse.y,
+          left: mouse.x
+        }).setCoords().canvas.renderAll();
+    }
+});
+
+canvas.on('mouse:out', function () {
+    if (canvas.isDrawingMode){
+        mousecursor
+        .set({
+          top: -100,
+          left: -100
+        })
+        .setCoords().canvas.renderAll();
+    }
+});
+
 $('#draw').on({
     'click': function(){
         canvas.isDrawingMode = !canvas.isDrawingMode;
+
         if (canvas.isDrawingMode) {
+          cursor.add(mousecursor);
+          isDraw = true;
           $(this).toggleClass('red');
         }
         else {
+        isDraw = false;
+          cursor.remove(mousecursor);
           $(this).toggleClass('red');
         }
   }
 });
 
+
 $('#brush-color').on({
     'change': function() {
-        brush.color = this.value;
+        canvas.freeDrawingBrush.color = this.value;
+        var bigint = parseInt(this.value.replace("#", ""), 16);
+        var r = (bigint >> 16) & 255;
+        var g = (bigint >> 8) & 255;
+        var b = bigint & 255;
+        mousecursor.fill = "rgba(" + [r,g,b,cursorOpacity].join(",") + ")";
     }
 });
 
@@ -510,6 +574,13 @@ $('#brush-color').on({
 $('#brush-size').on({
     'change': function() {
         brush.width = parseInt(this.value, 10) || 1;
+        mousecursor
+        .center()
+        .set({
+          radius: brush.width/2
+        })
+        .setCoords()
+        .canvas.renderAll();
         this.previousSibling.innerHTML = this.value;
     }
 });
@@ -549,10 +620,13 @@ function Paste() {
 		canvas.requestRenderAll();
 	});
 }
+
 $(document).keydown(function(e) {
         if (e.keyCode == ctrlKey || e.keyCode == cmdKey) ctrlDown = true;
+        if (e.keyCode == altKey && isDraw) canvas.isDrawingMode = false;
     }).keyup(function(e) {
         if (e.keyCode == ctrlKey || e.keyCode == cmdKey) ctrlDown = false;
+        if (e.keyCode == altKey && isDraw) canvas.isDrawingMode = true;
     });
 
 
@@ -651,6 +725,7 @@ $('#upload-file').change(function() {
             console.log($("input[class='origs']").length)
             fabric.Image.fromURL(images[0].src, function(img) {
                  canvas.setDimensions({width:img.width, height:img.height});
+                 cursor.setDimensions({width:img.width, height:img.height});
                  canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
             });
         },
