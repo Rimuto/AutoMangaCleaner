@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-
+import numexpr as ne
 
 # get grayscale image
 def get_grayscale(image):
@@ -66,6 +66,13 @@ def deskew(image):
 def match_template(image, template):
     return cv2.matchTemplate(image, template, cv2.TM_CCOEFF_NORMED)
 
+def bincount_numexpr_app(a):
+    a2D = a.reshape(-1, a.shape[-1])
+    col_range = (256, 256, 256) # generically : a2D.max(0)+1
+    eval_params = {'a0':a2D[:,0],'a1':a2D[:,1],'a2':a2D[:,2],
+                   's0':col_range[0],'s1':col_range[1]}
+    a1D = ne.evaluate('a0*s0*s1+a1*s0+a2',eval_params)
+    return np.unravel_index(np.bincount(a1D).argmax(), col_range)
 
 def remove(image):
     gray = get_grayscale(image)
@@ -74,6 +81,7 @@ def remove(image):
     contours, f = cv2.findContours(g, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
     cnts = sorted(contours, key=cv2.contourArea, reverse=True)[:3]
     mask = np.zeros([g.shape[0], g.shape[1]], dtype='uint8')
+
     cv2.fillPoly(mask, [cnts[0]], (255, 255, 255))
     res = cv2.bitwise_not(g, g, mask=mask)
     res = cv2.bitwise_and(g, g, mask=mask)
@@ -81,5 +89,5 @@ def remove(image):
     res = cv2.dilate(res, kernel, iterations=2)
     res = np.where(res == 255, True, False)
     image2 = image
-    image2[res] = 255
+    image2[res] = bincount_numexpr_app(image)
     return image2
