@@ -104,4 +104,6 @@ def detect(net, image):
             #print(boxes)
             #print(classIDs)
             cv2.putText(image, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+    #cv2.imshow('show', image)
+    #cv2.waitKey()
     return image, bboxes

@@ -44,7 +44,7 @@ def uploadajax():
             return redirect(request.url)
         if file and allowed_file(file.filename):
             npimg = np.frombuffer(file.read(), np.uint8)
-            img = cv2.imdecode(npimg,cv2.IMREAD_COLOR)
+            img = cv2.imdecode(npimg, cv2.IMREAD_COLOR)
             res, bboxes = detect.detect(nets, img.copy())
             cl = []
             for j in bboxes:
