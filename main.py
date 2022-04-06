@@ -3,6 +3,7 @@ from flask import Flask, request, redirect, url_for, render_template, send_from_
 import detect
 import cv2
 import clean
+from pyfladesk import init_gui
 
 import base64
 import numpy as np
@@ -68,6 +69,9 @@ def uploadajax():
 def index():
     return render_template("index.html")
 
+def start_server():
+    app.run()
 
 if __name__ == '__main__':
+    #init_gui(app, width=300, height=400,)
     app.run(debug=True)

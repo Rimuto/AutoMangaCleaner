@@ -26,6 +26,7 @@ body {
 }
 
 .box .row.content {
+  min-width: 400px;
   display: flex;
   justify-content: flex-start;
   /*flex-direction: row;*/
@@ -41,11 +42,26 @@ body {
   flex: 1 1 auto;
 }
 
+#separator {
+    cursor: col-resize;
+    background-color: #aaa;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 10px;
+    height: 100%;
+
+    /* Prevent the browser's built-in drag from interfering */
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
 .menu {
   width: 200px;
   display: inline-block;
-  border-right: 2px solid;
-  /*height: 100px;*/
+  min-width: 100px;
+  /*border-right: 2px solid;
+  height: 100px;*/
   /*border-style: solid;
   flex: 1 1 100px;*/
 }
