@@ -133,7 +133,7 @@ body > .group{
     cursor:pointer;
 }
 
-.sample-toolbar > select
+.sample-toolbar > datalist
 {
     margin-left: 1px;
     margin-right: 10px;

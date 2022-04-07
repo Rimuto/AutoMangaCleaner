@@ -290,6 +290,34 @@ $("#angle").on("input", function() {
     }
 });
 
+var fonts = ["Montez","Lobster","Josefin Sans","Shadows Into Light","Pacifico","Amatic SC", "Orbitron", "Rokkitt","Righteous","Dancing Script","Bangers","Chewy","Sigmar One","Architects Daughter","Abril Fatface","Covered By Your Grace","Kaushan Script","Gloria Hallelujah","Satisfy","Lobster Two","Comfortaa","Cinzel","Courgette"];
+var string = "";
+var select = document.getElementById("font-family")
+const fontInput = document.getElementById("font-input"),
+test = document.getElementById("test");
+var font_cntr = 0
+let font;
+
+fontInput.addEventListener("input", async () => {
+  const data = await fontInput.files[0].arrayBuffer();
+  font = new FontFace('test-font' + font_cntr, data);
+  await font.load();
+  document.fonts.add(font);
+  var opt = document.createElement('option');
+    opt.value = opt.innerHTML = "test-font" + font_cntr;
+    opt.style.fontFamily = "test-font" + font_cntr;
+    select.insertBefore(opt, select.firstChild);
+    font_cntr = font_cntr + 1;
+});
+
+for(var a = 0; a < fonts.length ; a++){
+	var opt = document.createElement('option');
+	opt.value = opt.innerHTML = fonts[a];
+	opt.style.fontFamily = fonts[a];
+	select.add(opt);
+}
+
+
 $("#font-family").on("input", function() {
   var obj = canvas.getActiveObject();
   if (obj) {

@@ -4,6 +4,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script src="{{url_for('static',filename='scripts/fabricjs/fabric.min.js')}}"></script>
     <script src='https://unpkg.com/panzoom@9.4.0/dist/panzoom.min.js'></script>
+    <link href='https://fonts.googleapis.com/css?family=Montez|Lobster|Josefin+Sans|Shadows+Into+Light|Pacifico|Amatic+SC:700|Orbitron:400,900|Rokkitt|Righteous|Dancing+Script:700|Bangers|Chewy|Sigmar+One|Architects+Daughter|Abril+Fatface|Covered+By+Your+Grace|Kaushan+Script|Gloria+Hallelujah|Satisfy|Lobster+Two:700|Comfortaa:700|Cinzel|Courgette' rel='stylesheet' type='text/css'>
     <!--<script src="{{url_for('static',filename='scripts/panzoom/panzoom.js')}}"></script>-->
     <script src="{{ url_for('static',filename='scripts/main.js') }}"></script>
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
@@ -19,6 +20,8 @@
                     <input name="file" type="file" multiple="">
                     <!--<button id="upload-file-btn" type="button">Upload</button>-->
             </form>
+            <label for="font-input">Upload font file</label>
+            <input type="file" id="font-input" value = "Upload fonts">
             <center>
                 <input type="button" id = "delete" value="Delete" />
                 <input type="button" id = "add" value="add" />
@@ -36,7 +39,7 @@
 
                 <i class="fa-light fa-text-height"></i>
 
-                <label class = "label" for="text-font-size">Font:</label>
+                <label class = "label" for="font-family">Font:</label>
                 <select id="font-family">
                         <option value="arial">Arial</option>
                         <option value="helvetica" selected>Helvetica</option>
