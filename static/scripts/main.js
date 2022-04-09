@@ -290,7 +290,7 @@ $("#angle").on("input", function() {
     }
 });
 
-var fonts = ["Montez","Lobster","Josefin Sans","Shadows Into Light","Pacifico","Amatic SC", "Orbitron", "Rokkitt","Righteous","Dancing Script","Bangers","Chewy","Sigmar One","Architects Daughter","Abril Fatface","Covered By Your Grace","Kaushan Script","Gloria Hallelujah","Satisfy","Lobster Two","Comfortaa","Cinzel","Courgette"];
+var fonts = ["Courier", "Arial", "Times New Roman", "Comic Sans MS", "Montez", "Lobster", "Josefin Sans","Shadows Into Light","Pacifico","Amatic SC", "Orbitron", "Rokkitt","Righteous","Dancing Script","Bangers","Chewy","Sigmar One","Architects Daughter","Abril Fatface","Covered By Your Grace","Kaushan Script","Gloria Hallelujah","Satisfy","Lobster Two","Comfortaa","Cinzel","Courgette"];
 var string = "";
 var select = document.getElementById("font-family")
 const fontInput = document.getElementById("font-input"),
@@ -304,6 +304,7 @@ fontInput.addEventListener("input", async () => {
   await font.load();
   document.fonts.add(font);
   var opt = document.createElement('option');
+    opt.classList.add("option");
     opt.value = opt.innerHTML = "test-font" + font_cntr;
     opt.style.fontFamily = "test-font" + font_cntr;
     select.insertBefore(opt, select.firstChild);
@@ -312,13 +313,72 @@ fontInput.addEventListener("input", async () => {
 
 for(var a = 0; a < fonts.length ; a++){
 	var opt = document.createElement('option');
+	opt.classList.add("option");
 	opt.value = opt.innerHTML = fonts[a];
 	opt.style.fontFamily = fonts[a];
 	select.add(opt);
 }
 
+$("#group").on('click', function() {
+    var activeObj = canvas.getActiveObject();
+    var activegroup = activeObj.toGroup();
+    var objectsInGroup = activegroup.getObjects();
 
-$("#font-family").on("input", function() {
+    activegroup.clone(function(newgroup) {
+        canvas.remove(activegroup);
+        objectsInGroup.forEach(function(object) {
+            canvas.remove(object);
+        });
+        canvas.add(newgroup);
+    });
+});
+
+$("#ungroup").click(function(){
+    var activeObject = canvas.getActiveObject();
+    if(activeObject.type=="group"){
+        var items = activeObject._objects;
+        activeObject._restoreObjectsState();
+        canvas.remove(activeObject);
+        for(var i = 0; i < items.length; i++) {
+          canvas.add(items[i]);
+          canvas.item(canvas.size()-1).hasControls = true;
+        }
+        canvas.renderAll();
+    }
+});
+
+$("#mk-bg").click(function(){
+    var activeObject = canvas.getActiveObject();
+    if(activeObject){
+        activeObject.set({
+            selectable: false
+        });
+        canvas.renderAll();
+    }
+});
+
+$("#fix").click(function(){
+    var activeObject = canvas.getActiveObject();
+    if(activeObject){
+        activeObject.set({
+            lockMovementX: !activeObject.get('lockMovementX'),
+            lockMovementY: !activeObject.get('lockMovementY'),
+            lockScalingX: !activeObject.get('lockScalingX'),
+            lockScalingY: !activeObject.get('lockScalingY'),
+        });
+        canvas.renderAll();
+    }
+});
+
+$("#apply-font").on("click", function() {
+  var obj = canvas.getActiveObject();
+  if (obj) {
+    setStyle(obj, 'fontFamily', $("#font-family").val());
+    canvas.renderAll();
+  }
+});
+
+$("#font-family").on("change", function() {
   var obj = canvas.getActiveObject();
   if (obj) {
     setStyle(obj, 'fontFamily', $("#font-family").val());
@@ -651,7 +711,7 @@ $('#brush-size').on({
           radius: brush.width/2
         })
         .setCoords()
-        .canvas.renderAll();
+        canvas.renderAll();
         this.previousSibling.innerHTML = this.value;
     }
 });

@@ -41,33 +41,23 @@
 
                 <label class = "label" for="font-family">Font:</label>
                 <select id="font-family">
-                        <option value="arial">Arial</option>
-                        <option value="helvetica" selected>Helvetica</option>
-                        <option value="myriad pro">Myriad Pro</option>
-                        <option value="delicious">Delicious</option>
-                        <option value="verdana">Verdana</option>
-                        <option value="georgia">Georgia</option>
-                        <option value="courier">Courier</option>
-                        <option value="comic sans ms">Comic Sans MS</option>
-                        <option value="impact">Impact</option>
-                        <option value="monaco">Monaco</option>
-                        <option value="optima">Optima</option>
-                        <option value="hoefler text">Hoefler Text</option>
-                        <option value="plaster">Plaster</option>
-                        <option value="engagement">Engagement</option>
                 </select>
-
+                <input type="button" id = "apply-font" value="Apply font" />
 
                 <label class = "label" for="text-font-size">Font Size:</label>
                 <input type="number" min="1" max="120" id="text-font-size" value="21">
 
 
-                <label class = "label" for="text-font-size">Line Height:</label>
+                <label class = "label" for="lineHeight">Line Height:</label>
                 <input id = "lineHeight" type="number" min="0.1" max="10" id="text-line-spacing" step="0.1" value="1">
                 <label class = "label" for="text-color">Text Color:</label>
                 <input type="color" id="text-color" size="15">
             </center>
             <center>
+                <input type="button" id = "mk-bg" value="Make background"/>
+                <input type="button" id = "fix" value="Fix position" />
+                <input type="button" id = "group" value="Group" />
+                <input type="button" id = "ungroup" value="Ungroup" />
                 <input type="button" id = "draw" value="Drawing Mode" />
 
                 <label class = "label" for="brush-size">Brush Size:</label>
