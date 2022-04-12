@@ -24,7 +24,7 @@
             </form>
             <label for="font-input">Upload font file</label>
             <input type="file" id="font-input" value = "Upload fonts"/>
-
+            <input class = "btn" type="button" id = "toggle" value = "Toggle theme">
 
         </div>
             <div class = "control_area">
@@ -84,9 +84,11 @@
                 <div class = "brush-control">
                     <div>
                         <div>
-                            <input class = "btn" type="button" id = "draw" value="Drawing Mode" />
+                            <center>
+                                <input class = "btn" type="button" id = "draw" value="Drawing Mode" />
+                            </center>
                         </div>
-                        <div>
+                        <div >
                             <label class = "label" for="brush-size">Size:</label>
                             <input type="number" min="1" max="120" id="brush-size" value="10">
                             <label class = "label" for="brush-color">Color:</label>
@@ -193,10 +195,17 @@
     </div>
     <div class = "row footer">
         <center>
-            <span id="prev" class="white bi bi-arrow-left-square"></span>
-            <span id="next" class="white bi bi-arrow-right-square"></span>
-            <a id="save" href="#">
-                <button class = "btn">Save</button>
+            <span id="prev" class="hov bi bi-arrow-left-square"></span>
+            <span id="next" class="hov bi bi-arrow-right-square"></span>
+            <input type = "button" id = "save" value = "Save">
+
+
+            <a id="save_raw" href="#">
+                <button class = "btn">Save raw images</button>
+            </a>
+
+            <a id="save_all" href="#">
+                <button class = "btn">Save all</button>
             </a>
         </center>
     </div>

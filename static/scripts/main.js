@@ -544,14 +544,27 @@ function isObjectEmpty(value) {
          Object.prototype.toString.call(value) === '[object Object]' && JSON.stringify(value) === '{}'
      );
 }
-
+$('#toggle').on({
+    'click': function(){
+        document.body.classList.toggle("dark");}
+});
 $('#save').on({
     'click': function(){
-        this.href = canvas.toDataURL({
+            //creating an invisible element
+        var element = document.createElement('a');
+        element.setAttribute('href', canvas.toDataURL({
             format: 'png',
-            quality: 0.8
-        });
-        this.download = 'custom.png';
+            quality: 1.0
+        }));
+        element.setAttribute('download', 'ready.png');
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+//        this.href = canvas.toDataURL({
+//            format: 'png',
+//            quality: 1.0
+//        });
+//        this.download = 'custom.png';
     }
 });
 
@@ -561,7 +574,6 @@ $('#next').on({
     'click': function(){
         event.preventDefault();
         canvas_arr[current] = canvas.toObject(['name', 'selectable', 'evented']);
-
         if (current + 1 > max){
             current = 0
         }
@@ -853,6 +865,14 @@ $('#upload-file').change(function() {
             images = [];
             for(var k in data) {
                 images.push(createImage('data:image/png;base64,' + data[k].pack.img, k));
+                fabric.Image.fromURL(images[k].src, function(img) {
+                    console.log(img);
+                    canvas_arr[k] = img;
+                });
+
+//
+//                canvas_arr[k] = canvas.toObject(['name', 'selectable', 'evented']);
+//                canvas.clear();
                 max = k;
                 origs= [];
                 for(var i in data[k].pack.cleaned){
@@ -867,6 +887,11 @@ $('#upload-file').change(function() {
                 myNewElement.appendTo('#menu')
             }
             console.log($("input[class='origs']").length)
+//            canvas.loadFromJSON(canvas_arr[0], canvas.renderAll.bind(canvas));
+//            canvas.loadFromJSON(canvas_arr[0], canvas.renderAll.bind(canvas));
+//            canvas.setDimensions({width:canvas_arr[0].backgroundImage.width, height:canvas_arr[0].backgroundImage.height});
+//            cursor.setDimensions({width:canvas_arr[0].backgroundImage.width, height:canvas_arr[0].backgroundImage.height});
+//            canvas.renderAll();
             fabric.Image.fromURL(images[0].src, function(img) {
                  canvas.setDimensions({width:img.width, height:img.height});
                  cursor.setDimensions({width:img.width, height:img.height});
