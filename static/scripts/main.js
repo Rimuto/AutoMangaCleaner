@@ -328,45 +328,59 @@ for(var a = 0; a < fonts.length ; a++){
 
 $("#group").on('click', function() {
     var activeObj = canvas.getActiveObject();
-    var activegroup = activeObj.toGroup();
-    var objectsInGroup = activegroup.getObjects();
+    if (activeObj){
+        var activegroup = activeObj.toGroup();
+        var objectsInGroup = activegroup.getObjects();
 
-    activegroup.clone(function(newgroup) {
-        canvas.remove(activegroup);
-        objectsInGroup.forEach(function(object) {
-            canvas.remove(object);
+        activegroup.clone(function(newgroup) {
+            canvas.remove(activegroup);
+            objectsInGroup.forEach(function(object) {
+                canvas.remove(object);
+            });
+            canvas.add(newgroup);
         });
-        canvas.add(newgroup);
-    });
+    }
 });
 
 $("#ungroup").click(function(){
     var activeObject = canvas.getActiveObject();
-    if(activeObject.type=="group"){
-        var items = activeObject._objects;
-        activeObject._restoreObjectsState();
-        canvas.remove(activeObject);
-        for(var i = 0; i < items.length; i++) {
-          if (items[i].get('type') == "textbox"){
-                items[i].set({
-                lockScalingY: true,
-                lockUniScaling: true
-              });
-          }
-          canvas.add(items[i]);
-          canvas.item(canvas.size()-1).hasControls = true;
+    if (activeObject){
+        if(activeObject.type=="group"){
+            var items = activeObject._objects;
+            activeObject._restoreObjectsState();
+            canvas.remove(activeObject);
+            for(var i = 0; i < items.length; i++) {
+              if (items[i].get('type') == "textbox"){
+                    items[i].set({
+                    lockScalingY: true,
+                    lockUniScaling: true
+                  });
+              }
+              canvas.add(items[i]);
+              canvas.item(canvas.size()-1).hasControls = true;
+            }
+            canvas.renderAll();
         }
-        canvas.renderAll();
     }
 });
 
 $("#mk-bg").click(function(){
     var activeObject = canvas.getActiveObject();
     if(activeObject){
-        activeObject.set({
-            selectable: false
-        });
-        canvas.renderAll();
+        if(activeObject.type=="group"){
+            activeObject.set({
+                selectable: false
+            });
+        }
+        else{
+            var items = activeObject._objects;
+            for(var i = 0; i < items.length; i++) {
+                items[i].set({
+                    selectable: false
+                });
+            }
+        }
+        canvas.discardActiveObject().renderAll();
     }
 });
 
@@ -535,6 +549,7 @@ var createOrigImage = function(x, y, src, title) {
 // array of images
 var images = [];
 var canvas_arr = {};
+var img_arr = {};
 var canvases = [];
 var original_arr = {};
 var current = 0;
@@ -581,26 +596,17 @@ $('#save_raw').on({
     }
 });
 
+
 $('#save_all').on({
     'click': function(){
         if (Object.keys(canvas_arr).length > 1){
             var zip = new JSZip();
-
-            //creating an invisible element
+            img_arr[current] = canvas.toDataURL({
+                format: 'png',
+                quality: 1.0
+            });
             for (var i in canvas_arr){
-                var element = document.createElement('canvas');
-                element.setAttribute('id', 'tmp');
-                document.body.appendChild(element);
-                tmp = new fabric.Canvas('tmp')
-                tmp.loadFromJSON(canvas_arr[current], tmp.renderAll.bind(tmp));
-                tmp.setDimensions({width:canvas_arr[current].backgroundImage.width, height:canvas_arr[current].backgroundImage.height});
-                tmp.setDimensions({width:canvas_arr[current].backgroundImage.width, height:canvas_arr[current].backgroundImage.height});
-                tmp.renderAll();
-
-                zip.file("ready" + i +".png", tmp.toDataURL({
-                    format: 'png',
-                    quality: 1.0
-                }).split(',')[1], {base64: true})
+                zip.file("ready" + i +".png", img_arr[i].split(',')[1], {base64: true})
             }
             zip.generateAsync({type:"base64"}).then(function (base64) {
                 window.location = "data:application/zip;base64," + base64;
@@ -616,78 +622,87 @@ $('#save_all').on({
 $('#next').on({
     'click': function(){
         event.preventDefault();
-        canvas_arr[current] = canvas.toObject(['name', 'selectable', 'evented']);
-        if (current + 1 > max){
-            current = 0
-        }
-        else{
-            current = current + 1;}
-        canvas.clear();
-
-        if (current in original_arr){
-            $("#menu").empty();
-            for(var i in original_arr[current]){
-                if (original_arr[current][i][3]){
-                    var myNewElement = $("<li><input class = \"origs\" type=\"checkbox\" id=\"" + i + "\" checked/><label for=\"" + i + "\"><img src=\"" + original_arr[current][i][2].src + "\"/></label></li>");
-
-                }else{
-                    var myNewElement = $("<li><input class = \"origs\" type=\"checkbox\" id=\"" + i + "\"/><label for=\"" + i + "\"><img src=\"" + original_arr[current][i][2].src + "\"/></label></li>");
-                }
-                myNewElement.appendTo('#menu')
+        if (Object.keys(images).length > 1){
+            img_arr[current] = canvas.toDataURL('png');
+            canvas_arr[current] = canvas.toObject(['name', 'selectable', 'evented']);
+            if (current + 1 > max){
+                current = 0
             }
-        }
+            else{
+                current = current + 1;}
+            canvas.clear();
+            if (current in original_arr){
+                $("#menu").empty();
+                for(var i in original_arr[current]){
+                    if (original_arr[current][i][3]){
+                        var myNewElement = $("<li><input class = \"origs\" type=\"checkbox\" id=\"" + i + "\" checked/><label for=\"" + i + "\"><img src=\"" + original_arr[current][i][2].src + "\"/></label></li>");
 
-        if (current in canvas_arr){
-            canvas.loadFromJSON(canvas_arr[current], canvas.renderAll.bind(canvas));
-            canvas.setDimensions({width:canvas_arr[current].backgroundImage.width, height:canvas_arr[current].backgroundImage.height});
-            cursor.setDimensions({width:canvas_arr[current].backgroundImage.width, height:canvas_arr[current].backgroundImage.height});
+                    }else{
+                        var myNewElement = $("<li><input class = \"origs\" type=\"checkbox\" id=\"" + i + "\"/><label for=\"" + i + "\"><img src=\"" + original_arr[current][i][2].src + "\"/></label></li>");
+                    }
+                    myNewElement.appendTo('#menu')
+                }
+            }
+
+            if (current in canvas_arr){
+                canvas.loadFromJSON(canvas_arr[current], canvas.renderAll.bind(canvas));
+                canvas.setDimensions({width:canvas_arr[current].backgroundImage.width, height:canvas_arr[current].backgroundImage.height});
+                cursor.setDimensions({width:canvas_arr[current].backgroundImage.width, height:canvas_arr[current].backgroundImage.height});
+            }
+            else{
+                fabric.Image.fromURL(images[current].src, function(img) {
+                    canvas.setDimensions({width:img.width, height:img.height});
+                    cursor.setDimensions({width:img.width, height:img.height});
+                    canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
+                });
+                canvas_arr[current] = canvas.toObject(['name', 'selectable', 'evented']);
+                img_arr[current] = canvas.toDataURL('png');
+            }
+            //canvas.loadFromJSON(canvas_arr[current], canvas.renderAll.bind(canvas));
+            //$('#myimage').attr('src', images[current].src);
         }
-        else{
-            fabric.Image.fromURL(images[current].src, function(img) {
-                canvas.setDimensions({width:img.width, height:img.height});
-                cursor.setDimensions({width:img.width, height:img.height});
-                canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
-            });
-        }
-        //canvas.loadFromJSON(canvas_arr[current], canvas.renderAll.bind(canvas));
-        //$('#myimage').attr('src', images[current].src);
     }
 });
 
 $('#prev').on({
     'click': function(){
         event.preventDefault();
-        canvas_arr[current] = canvas.toObject(['name', 'selectable', 'evented']);
-        if (current - 1 < 0){
-            current = max
-        } else {
-            current = current - 1;}
-        canvas.clear();
+        if (Object.keys(images).length > 1){
+            canvas_arr[current] = canvas.toObject(['name', 'selectable', 'evented']);
+            img_arr[current] = canvas.toDataURL('png');
+            if (current - 1 < 0){
+                current = max
+            } else {
+                current = current - 1;}
+            canvas.clear();
 
-        if (current in original_arr){
-            $("#menu").empty();
-            for(var i in original_arr[current]){
-                if (original_arr[current][i][3]){
-                    var myNewElement = $("<li><input class = \"origs\" type=\"checkbox\" id=\"" + i + "\" checked/><label for=\"" + i + "\"><img src=\"" + original_arr[current][i][2].src + "\"/></label></li>");
+            if (current in original_arr){
+                $("#menu").empty();
+                for(var i in original_arr[current]){
+                    if (original_arr[current][i][3]){
+                        var myNewElement = $("<li><input class = \"origs\" type=\"checkbox\" id=\"" + i + "\" checked/><label for=\"" + i + "\"><img src=\"" + original_arr[current][i][2].src + "\"/></label></li>");
 
-                }else{
-                    var myNewElement = $("<li><input class = \"origs\" type=\"checkbox\" id=\"" + i + "\"/><label for=\"" + i + "\"><img src=\"" + original_arr[current][i][2].src + "\"/></label></li>");
+                    }else{
+                        var myNewElement = $("<li><input class = \"origs\" type=\"checkbox\" id=\"" + i + "\"/><label for=\"" + i + "\"><img src=\"" + original_arr[current][i][2].src + "\"/></label></li>");
+                    }
+                    myNewElement.appendTo('#menu')
                 }
-                myNewElement.appendTo('#menu')
             }
-        }
 
-        if (current in canvas_arr){
-            canvas.loadFromJSON(canvas_arr[current], canvas.renderAll.bind(canvas));
-            canvas.setDimensions({width:canvas_arr[current].backgroundImage.width, height:canvas_arr[current].backgroundImage.height});
-            cursor.setDimensions({width:canvas_arr[current].backgroundImage.width, height:canvas_arr[current].backgroundImage.height});
-        }
-        else{
-            fabric.Image.fromURL(images[current].src, function(img) {
-                canvas.setDimensions({width:img.width, height:img.height});
-                cursor.setDimensions({width:img.width, height:img.height});
-                canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
-            });
+            if (current in canvas_arr){
+                canvas.loadFromJSON(canvas_arr[current], canvas.renderAll.bind(canvas));
+                canvas.setDimensions({width:canvas_arr[current].backgroundImage.width, height:canvas_arr[current].backgroundImage.height});
+                cursor.setDimensions({width:canvas_arr[current].backgroundImage.width, height:canvas_arr[current].backgroundImage.height});
+            }
+            else{
+                fabric.Image.fromURL(images[current].src, function(img) {
+                    canvas.setDimensions({width:img.width, height:img.height});
+                    cursor.setDimensions({width:img.width, height:img.height});
+                    canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
+                });
+                canvas_arr[current] = canvas.toObject(['name', 'selectable', 'evented']);
+                img_arr[current] = canvas.toDataURL('png');
+            }
         }
     }
 });
@@ -908,9 +923,11 @@ $('#upload-file').change(function() {
             images = [];
             for(var k in data) {
                 images.push(createImage('data:image/png;base64,' + data[k].pack.img, k));
-//
-//                canvas_arr[k] = canvas.toObject(['name', 'selectable', 'evented']);
-//                canvas.clear();
+                //Создать канвас на хтмл
+                //Залить на этот канвас бэкграунд
+                //запушить в список канвасов
+                //повторить
+
                 max = k;
                 origs= [];
                 for(var i in data[k].pack.cleaned){
@@ -925,11 +942,6 @@ $('#upload-file').change(function() {
                 myNewElement.appendTo('#menu')
             }
             console.log($("input[class='origs']").length)
-//            canvas.loadFromJSON(canvas_arr[0], canvas.renderAll.bind(canvas));
-//            canvas.loadFromJSON(canvas_arr[0], canvas.renderAll.bind(canvas));
-//            canvas.setDimensions({width:canvas_arr[0].backgroundImage.width, height:canvas_arr[0].backgroundImage.height});
-//            cursor.setDimensions({width:canvas_arr[0].backgroundImage.width, height:canvas_arr[0].backgroundImage.height});
-//            canvas.renderAll();
             fabric.Image.fromURL(images[0].src, function(img) {
                  canvas.setDimensions({width:img.width, height:img.height});
                  cursor.setDimensions({width:img.width, height:img.height});
