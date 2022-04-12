@@ -7,6 +7,7 @@
     <link href='https://fonts.googleapis.com/css?family=Montez|Lobster|Josefin+Sans|Shadows+Into+Light|Pacifico|Amatic+SC:700|Orbitron:400,900|Rokkitt|Righteous|Dancing+Script:700|Bangers|Chewy|Sigmar+One|Architects+Daughter|Abril+Fatface|Covered+By+Your+Grace|Kaushan+Script|Gloria+Hallelujah|Satisfy|Lobster+Two:700|Comfortaa:700|Cinzel|Courgette' rel='stylesheet' type='text/css'>
     <!--<script src="{{url_for('static',filename='scripts/panzoom/panzoom.js')}}"></script>-->
     <script src="{{ url_for('static',filename='scripts/main.js') }}"></script>
+
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
     <link rel="stylesheet" type="text/css"  href="{{ url_for('static',filename='styles/style.css') }}">
@@ -15,15 +16,87 @@
 <div class = "box">
     <div class = "row header">
         <div class="sample-toolbar">
-            <form id="upload-file" method="post" enctype="multipart/form-data" multiple="">
+            <div class = "upload_area">
+            <form id="upload-file" method="post" enctype="multipart/form-data" multiple="" >
                     <label >Select a file</label>
                     <input name="file" type="file" multiple="">
                     <!--<button id="upload-file-btn" type="button">Upload</button>-->
             </form>
             <label for="font-input">Upload font file</label>
-            <input type="file" id="font-input" value = "Upload fonts">
+            <input type="file" id="font-input" value = "Upload fonts"/>
+
+
+        </div>
+            <div class = "control_area">
+                <div class = "text-controls">
+                    <div id = "txt-cntrl-1">
+                        <div>
+                            <label class = "label" for="font-family">Font:</label>
+                            <select id="font-family"></select>
+                            <input class = "btn" type="button" id = "apply-font" value="Apply" />
+                        </div>
+                        <div>
+                            <label class = "label" for="text-font-size">Size:</label>
+                            <input type="number" min="1" max="120" id="text-font-size" value="21">
+                        </div>
+                    </div>
+                    <div id = "txt-cntrl-2">
+                        <div>
+                            <label class = "label" for="lineHeight">Height:</label>
+                            <input id = "lineHeight" type="number" min="0.1" max="10" id="text-line-spacing" step="0.1" value="1">
+                        </div>
+                        <div>
+                            <label class = "label" for="text-color">Color:</label>
+                            <input type="color" id="text-color" size="15">
+                        </div>
+                    </div>
+                    <div id = "txt-cntrl-3">
+                        <div>
+                            <span id = "bold" class="white hov bi bi-type-bold"></span>
+                            <span id = "italic" class="white hov bi bi-type-italic" ></span>
+                            <span id = "underline" class="white hov bi bi-type-underline"></span>
+                        </div>
+                        <div>
+                            <span id = "text-align-left" class="white hov bi bi-justify-left"></span>
+                            <span id = "text-align-center" class="white hov bi bi-text-center"></span>
+                            <span id = "text-align-right" class="white hov bi bi-justify-right"></span>
+                            <span id = "text-align-justify" class="white hov bi bi-justify"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class = "elements-control">
+                    <div id = "el-cntrl-1">
+                        <input class="btn" type="button" id = "delete" value="Delete" />
+                        <input class="btn" type="button" id = "add" value="add" />
+                        <input class="lng-btn" type="button" id = "toFront" value = "bringToFront">
+                    </div>
+                    <div id = "el-cntrl-2">
+                        <input class="btn" type="button" id = "group" value="Group" />
+                        <input class="btn" type="button" id = "ungroup" value="Ungroup" />
+                        <input class="lng-btn" type="button" id = "mk-bg" value="Make background"/>
+                    </div>
+                    <div id = "el-cntrl-3">
+                        <label class = "label" for="angle">Angle:</label>
+                        <input type="number" min="-360" max="360" id="angle" value="0">
+                        <input class="btn" type="button" id = "fix" value="Fix position" />
+                    </div>
+                </div>
+                <div class = "brush-control">
+                    <div>
+                        <div>
+                            <input class = "btn" type="button" id = "draw" value="Drawing Mode" />
+                        </div>
+                        <div>
+                            <label class = "label" for="brush-size">Size:</label>
+                            <input type="number" min="1" max="120" id="brush-size" value="10">
+                            <label class = "label" for="brush-color">Color:</label>
+                            <input type="color" id="brush-color" size="15">
+                        </div>
+                    </div>
+                </div>
+            </div>
             <center>
-                <input type="button" id = "delete" value="Delete" />
+                <!--<input type="button" id = "delete" value="Delete" />
                 <input type="button" id = "add" value="add" />
                 <input type="button" id = "toFront" value = "bringToFront"></input>
                 <label for="angle">Angle:</label>
@@ -35,9 +108,9 @@
                 <span id = "text-align-left" class="bi bi-justify-left"></span>
                 <span id = "text-align-center" class="bi bi-text-center"></span>
                 <span id = "text-align-right" class="bi bi-justify-right"></span>
-                <span id = "text-align-justify" class="bi bi-justify"></span>
+                <span id = "text-align-justify" class="bi bi-justify"></span>-->
 
-                <i class="fa-light fa-text-height"></i>
+                <!--<i class="fa-light fa-text-height"></i>
 
                 <label class = "label" for="font-family">Font:</label>
                 <select id="font-family">
@@ -51,10 +124,10 @@
                 <label class = "label" for="lineHeight">Line Height:</label>
                 <input id = "lineHeight" type="number" min="0.1" max="10" id="text-line-spacing" step="0.1" value="1">
                 <label class = "label" for="text-color">Text Color:</label>
-                <input type="color" id="text-color" size="15">
+                <input type="color" id="text-color" size="15">-->
             </center>
             <center>
-                <input type="button" id = "mk-bg" value="Make background"/>
+               <!-- <input type="button" id = "mk-bg" value="Make background"/>
                 <input type="button" id = "fix" value="Fix position" />
                 <input type="button" id = "group" value="Group" />
                 <input type="button" id = "ungroup" value="Ungroup" />
@@ -64,7 +137,7 @@
                 <input type="number" min="1" max="120" id="brush-size" value="10">
 
                 <label class = "label" for="brush-color">Brush Color:</label>
-                <input type="color" id="brush-color" size="15">
+                <input type="color" id="brush-color" size="15">-->
             </center>
         </div>
     </div>
@@ -120,10 +193,10 @@
     </div>
     <div class = "row footer">
         <center>
-            <span id="prev" class="bi bi-arrow-left-square"></span>
-            <span id="next" class="bi bi-arrow-right-square"></span>
+            <span id="prev" class="white bi bi-arrow-left-square"></span>
+            <span id="next" class="white bi bi-arrow-right-square"></span>
             <a id="save" href="#">
-                <button>Save</button>
+                <button class = "btn">Save</button>
             </a>
         </center>
     </div>

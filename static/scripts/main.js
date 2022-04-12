@@ -18,6 +18,13 @@ $(document).ready(function() {
         }
     });
 });
+function adjustTheme() {
+    $("#theme-stylesheet").attr("href", "css/dark_theme.css");
+}
+$("#theme_chng").click(function() {
+    adjustTheme();
+});
+
 
 function dragElement(element, direction)
 {
@@ -340,6 +347,12 @@ $("#ungroup").click(function(){
         activeObject._restoreObjectsState();
         canvas.remove(activeObject);
         for(var i = 0; i < items.length; i++) {
+          if (items[i].get('type') == "textbox"){
+                items[i].set({
+                lockScalingY: true,
+                lockUniScaling: true
+              });
+          }
           canvas.add(items[i]);
           canvas.item(canvas.size()-1).hasControls = true;
         }

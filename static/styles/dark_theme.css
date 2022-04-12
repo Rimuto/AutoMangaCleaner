@@ -1,11 +1,19 @@
 *{
+    color: #3e86a0;/*#87939a*/
+
         user-select: none;
         -moz-user-select: none;
         -khtml-user-select: none;
         -webkit-user-select: none;
         -o-user-select: none;
 }
-
+input{
+    background: #45494a;
+    color: #3e86a0;
+}
+select{
+background: #45494a;
+}
 html,
 body {
   height: 100%;
@@ -102,11 +110,11 @@ body {
         text-decoration: none;
         font-weight: 700;
         padding: 3px 6px;
-        background: #eaeef1;
+        background:#45494a ;/*#eaeef1*/
         display: inline-block;
         min-width: 90px;
         border-radius: 5px;
-        color: rgba(0,0,0,.6);
+        color: #87939a;/*rgba(0,0,0,.6)*/
 }
 
 .btn:hover, .btn.hover {
@@ -125,11 +133,11 @@ body {
         font-size:13px;
         font-weight: 600;
         padding: 3px 6px;
-        background: #eaeef1;
+        background: #45494a;/*#eaeef1*/
         display: inline-block;
         min-width: 194px;
         border-radius: 5px;
-        color: rgba(0,0,0,.6);
+        color:#87939a ;/*rgba(0,0,0,.6)*/
 }
 
 .lng-btn:hover, .lng-btn.hover {
@@ -169,6 +177,7 @@ body {
 }
 
 .box .row.content {
+background: #2b2b2b;
   min-width: 400px;
   display: flex;
   justify-content: flex-start;
@@ -184,7 +193,10 @@ body {
   margin:0 100px 0 100px;*/
   flex: 1 1 auto;
 }
-
+.white, .white a {
+color: #3e86a0;
+  /*color: #87939a;*/
+}
 #separator {
     cursor: col-resize;
     background-color: #aaa;
@@ -203,6 +215,7 @@ body {
   width: 200px;
   display: inline-block;
   min-width: 100px;
+  background-color:#3c3f41;
   /*border-right: 2px solid;
   height: 100px;*/
   /*border-style: solid;
@@ -221,10 +234,10 @@ body {
 
 .box .row.footer {
   flex: 0 0 50px;
-  border:solid 1px #ddd;
-  background:#f4f4f4;/**/
+  /*border:solid 1px #ddd;#f4f4f4border-radius:3px;*/
+  background:#3c3f41;
 
-    border-radius:3px;
+
 }
 .box .row.footer > center > span:hover
 {
@@ -239,7 +252,7 @@ canvas {
     font-size: 25px;
 }
 .label {
-    color: black;
+    color: #87939a;
     font-size: 18px;
     margin-right: 1px;
 }
@@ -257,11 +270,11 @@ body > .group{
 
 .sample-toolbar
 {
-    border:solid 1px #ddd;
-    background:#f4f4f4;
+    /*border:solid 1px #ddd;#f4f4f4border-radius:3px;*/
+    background:#3c3f41;
     padding: 5px;
     overflow: auto;
-    border-radius:3px;
+
 }
 
 .sample-toolbar > span
