@@ -535,6 +535,7 @@ var createOrigImage = function(x, y, src, title) {
 // array of images
 var images = [];
 var canvas_arr = {};
+var canvases = [];
 var original_arr = {};
 var current = 0;
 var max = 0;
@@ -550,7 +551,7 @@ $('#toggle').on({
 });
 $('#save').on({
     'click': function(){
-            //creating an invisible element
+        //creating an invisible element
         var element = document.createElement('a');
         element.setAttribute('href', canvas.toDataURL({
             format: 'png',
@@ -560,14 +561,56 @@ $('#save').on({
         document.body.appendChild(element);
         element.click();
         document.body.removeChild(element);
-//        this.href = canvas.toDataURL({
-//            format: 'png',
-//            quality: 1.0
-//        });
-//        this.download = 'custom.png';
+    }
+});
+$('#save_raw').on({
+    'click': function(){
+        if (Object.keys(images).length > 1){
+            var zip = new JSZip();
+            //creating an invisible element
+            for (var i in images){
+                zip.file("ready" + i +".png", images[i].src.split(',')[1], {base64: true})
+            }
+            zip.generateAsync({type:"base64"}).then(function (base64) {
+                window.location = "data:application/zip;base64," + base64;
+            }, function (err) {
+                jQuery("#data_uri").text(err);
+            });
+            delete(zip);
+        }
     }
 });
 
+$('#save_all').on({
+    'click': function(){
+        if (Object.keys(canvas_arr).length > 1){
+            var zip = new JSZip();
+
+            //creating an invisible element
+            for (var i in canvas_arr){
+                var element = document.createElement('canvas');
+                element.setAttribute('id', 'tmp');
+                document.body.appendChild(element);
+                tmp = new fabric.Canvas('tmp')
+                tmp.loadFromJSON(canvas_arr[current], tmp.renderAll.bind(tmp));
+                tmp.setDimensions({width:canvas_arr[current].backgroundImage.width, height:canvas_arr[current].backgroundImage.height});
+                tmp.setDimensions({width:canvas_arr[current].backgroundImage.width, height:canvas_arr[current].backgroundImage.height});
+                tmp.renderAll();
+
+                zip.file("ready" + i +".png", tmp.toDataURL({
+                    format: 'png',
+                    quality: 1.0
+                }).split(',')[1], {base64: true})
+            }
+            zip.generateAsync({type:"base64"}).then(function (base64) {
+                window.location = "data:application/zip;base64," + base64;
+            }, function (err) {
+                jQuery("#data_uri").text(err);
+            });
+            delete(zip);
+        }
+    }
+});
 /*for the save*/
 
 $('#next').on({
@@ -865,11 +908,6 @@ $('#upload-file').change(function() {
             images = [];
             for(var k in data) {
                 images.push(createImage('data:image/png;base64,' + data[k].pack.img, k));
-                fabric.Image.fromURL(images[k].src, function(img) {
-                    console.log(img);
-                    canvas_arr[k] = img;
-                });
-
 //
 //                canvas_arr[k] = canvas.toObject(['name', 'selectable', 'evented']);
 //                canvas.clear();
