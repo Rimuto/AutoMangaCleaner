@@ -3,7 +3,7 @@ from flask import Flask, request, redirect, url_for, render_template, send_from_
 import detect
 import cv2
 import clean
-from pyfladesk import init_gui
+#from pyfladesk import init_gui
 
 import base64
 import numpy as np
@@ -12,10 +12,10 @@ labelsPath = "YOLOv4/obj.names"
 cfgpath = "YOLOv4/yolov4-obj.cfg"
 wpath = "YOLOv4/yolov4-obj_final.weights"
 
-app = Flask(__name__)
-app.config["SECRET_KEY"] = "SECRET_KEY"
+application  = Flask(__name__)
+application.config["SECRET_KEY"] = "SECRET_KEY"
 DOWNLOAD_FOLDER = os.path.dirname(os.path.abspath(__file__)) + '\\downloads\\'
-app.config['DOWNLOAD_FOLDER'] = DOWNLOAD_FOLDER
+application.config['DOWNLOAD_FOLDER'] = DOWNLOAD_FOLDER
 ALLOWED_EXTENSIONS = {'jpg', 'png'}
 
 CFG = detect.config(cfgpath)
@@ -35,7 +35,7 @@ def get_path(filename):
     return os.path.join("./" + filename)
 
 
-@app.route("/uploadajax", methods=[ "GET",'POST'])
+@application.route("/uploadajax", methods=[ "GET",'POST'])
 def uploadajax():
     files = request.files.getlist("file")
     data = {}
@@ -65,13 +65,13 @@ def uploadajax():
     return data
 
 
-@app.route("/")
+@application.route("/")
 def index():
     return render_template("index.html")
 
 def start_server():
-    app.run()
+    application.run()
 
 if __name__ == '__main__':
     #init_gui(app, width=300, height=400,)
-    app.run(debug=True)
+    application.run(host='0.0.0.0')
