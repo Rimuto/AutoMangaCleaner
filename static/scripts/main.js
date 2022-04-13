@@ -112,6 +112,7 @@ var ctrlDown = false,
     altKey = 18,
     isDraw = false;
 var id = 0;
+var length = 0;
 var selected_div;
 var canvas = new fabric.Canvas("canvas", {freeDrawingCursor: 'none'});
 var cursor = new fabric.StaticCanvas("cursor");
@@ -259,7 +260,7 @@ canvas.on('object:rotating', function(options) {
     //console.log($('#text-font-size').val());
 });
 
-$( "#add" ).click(function() {
+$("#add").click(function() {
     var text = new fabric.Textbox('A Computer Science Portal',
     {
         cornerSize: 10,
@@ -618,92 +619,88 @@ $('#save_all').on({
     }
 });
 /*for the save*/
+function shift(){
+    canvas.clear();
+    if (current in original_arr){
+        $("#menu").empty();
+        for(var i in original_arr[current]){
+            if (original_arr[current][i][3]){
+                var myNewElement = $("<li><input class = \"origs\" type=\"checkbox\" id=\"" + i + "\" checked/><label for=\"" + i + "\"><img src=\"" + original_arr[current][i][2].src + "\"/></label></li>");
+
+            }else{
+                var myNewElement = $("<li><input class = \"origs\" type=\"checkbox\" id=\"" + i + "\"/><label for=\"" + i + "\"><img src=\"" + original_arr[current][i][2].src + "\"/></label></li>");
+            }
+            myNewElement.appendTo('#menu')
+        }
+    }
+    if (current in canvas_arr){
+        $("#counter").html((current + 1) + " / " + length);
+        canvas.loadFromJSON(canvas_arr[current], canvas.renderAll.bind(canvas));
+        canvas.setDimensions({width:canvas_arr[current].backgroundImage.width, height:canvas_arr[current].backgroundImage.height});
+        cursor.setDimensions({width:canvas_arr[current].backgroundImage.width, height:canvas_arr[current].backgroundImage.height});
+    }
+    else{
+        $("#counter").html((current + 1) + " / " + length);
+        fabric.Image.fromURL(images[current].src, function(img) {
+            canvas.setDimensions({width:img.width, height:img.height});
+            cursor.setDimensions({width:img.width, height:img.height});
+            canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
+        });
+        canvas_arr[current] = canvas.toObject(['name', 'selectable', 'evented']);
+        img_arr[current] = canvas.toDataURL('png');
+    }
+    canvas.renderAll();
+}
+
+function next(){
+   if (Object.keys(images).length > 1){
+        img_arr[current] = canvas.toDataURL('png');
+        canvas_arr[current] = canvas.toObject(['name', 'selectable', 'evented']);
+        if (current + 1 > max){
+            current = 0
+        }
+        else{
+            current = current + 1;
+        }
+        canvas.clear();
+        shift();
+    }
+}
+function prev(){
+    if (Object.keys(images).length > 1){
+        canvas_arr[current] = canvas.toObject(['name', 'selectable', 'evented']);
+        img_arr[current] = canvas.toDataURL('png');
+        if (current - 1 < 0){
+            current = max
+        } else {
+            current = current - 1;}
+        canvas.clear();
+        shift();
+    }
+}
 
 $('#next').on({
     'click': function(){
         event.preventDefault();
-        if (Object.keys(images).length > 1){
-            img_arr[current] = canvas.toDataURL('png');
-            canvas_arr[current] = canvas.toObject(['name', 'selectable', 'evented']);
-            if (current + 1 > max){
-                current = 0
-            }
-            else{
-                current = current + 1;}
-            canvas.clear();
-            if (current in original_arr){
-                $("#menu").empty();
-                for(var i in original_arr[current]){
-                    if (original_arr[current][i][3]){
-                        var myNewElement = $("<li><input class = \"origs\" type=\"checkbox\" id=\"" + i + "\" checked/><label for=\"" + i + "\"><img src=\"" + original_arr[current][i][2].src + "\"/></label></li>");
-
-                    }else{
-                        var myNewElement = $("<li><input class = \"origs\" type=\"checkbox\" id=\"" + i + "\"/><label for=\"" + i + "\"><img src=\"" + original_arr[current][i][2].src + "\"/></label></li>");
-                    }
-                    myNewElement.appendTo('#menu')
-                }
-            }
-
-            if (current in canvas_arr){
-                canvas.loadFromJSON(canvas_arr[current], canvas.renderAll.bind(canvas));
-                canvas.setDimensions({width:canvas_arr[current].backgroundImage.width, height:canvas_arr[current].backgroundImage.height});
-                cursor.setDimensions({width:canvas_arr[current].backgroundImage.width, height:canvas_arr[current].backgroundImage.height});
-            }
-            else{
-                fabric.Image.fromURL(images[current].src, function(img) {
-                    canvas.setDimensions({width:img.width, height:img.height});
-                    cursor.setDimensions({width:img.width, height:img.height});
-                    canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
-                });
-                canvas_arr[current] = canvas.toObject(['name', 'selectable', 'evented']);
-                img_arr[current] = canvas.toDataURL('png');
-            }
-            //canvas.loadFromJSON(canvas_arr[current], canvas.renderAll.bind(canvas));
-            //$('#myimage').attr('src', images[current].src);
-        }
+        next();
+        $(this).attr('disabled', 'disabled');
+        var disabledElem = $(this);
+        setTimeout(function() {
+            disabledElem.removeAttr('disabled');
+        }, 500);
     }
 });
+
 
 $('#prev').on({
     'click': function(){
         event.preventDefault();
-        if (Object.keys(images).length > 1){
-            canvas_arr[current] = canvas.toObject(['name', 'selectable', 'evented']);
-            img_arr[current] = canvas.toDataURL('png');
-            if (current - 1 < 0){
-                current = max
-            } else {
-                current = current - 1;}
-            canvas.clear();
-
-            if (current in original_arr){
-                $("#menu").empty();
-                for(var i in original_arr[current]){
-                    if (original_arr[current][i][3]){
-                        var myNewElement = $("<li><input class = \"origs\" type=\"checkbox\" id=\"" + i + "\" checked/><label for=\"" + i + "\"><img src=\"" + original_arr[current][i][2].src + "\"/></label></li>");
-
-                    }else{
-                        var myNewElement = $("<li><input class = \"origs\" type=\"checkbox\" id=\"" + i + "\"/><label for=\"" + i + "\"><img src=\"" + original_arr[current][i][2].src + "\"/></label></li>");
-                    }
-                    myNewElement.appendTo('#menu')
-                }
-            }
-
-            if (current in canvas_arr){
-                canvas.loadFromJSON(canvas_arr[current], canvas.renderAll.bind(canvas));
-                canvas.setDimensions({width:canvas_arr[current].backgroundImage.width, height:canvas_arr[current].backgroundImage.height});
-                cursor.setDimensions({width:canvas_arr[current].backgroundImage.width, height:canvas_arr[current].backgroundImage.height});
-            }
-            else{
-                fabric.Image.fromURL(images[current].src, function(img) {
-                    canvas.setDimensions({width:img.width, height:img.height});
-                    cursor.setDimensions({width:img.width, height:img.height});
-                    canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
-                });
-                canvas_arr[current] = canvas.toObject(['name', 'selectable', 'evented']);
-                img_arr[current] = canvas.toDataURL('png');
-            }
-        }
+        prev();
+        $(this).attr('disabled', 'disabled');
+        var disabledElem = $(this);
+        setTimeout(function() {
+            disabledElem.removeAttr('disabled');
+        }, 500);
     }
 });
 
@@ -755,6 +752,14 @@ canvas.on('mouse:out', function () {
     }
 });
 
+canvas.on('after:render', function (evt) {
+    $("#next").css("pointer-events","auto");
+    $("#prev").css("pointer-events","auto");
+});
+canvas.on('before:render', function (evt) {
+    $("#next").css("pointer-events","none");
+    $("#prev").css("pointer-events","none");
+});
 $('#draw').on({
     'click': function(){
         canvas.isDrawingMode = !canvas.isDrawingMode;
@@ -928,14 +933,15 @@ $('#upload-file').change(function() {
                 //запушить в список канвасов
                 //повторить
 
-                max = k;
+                max = Number(k);
                 origs= [];
                 for(var i in data[k].pack.cleaned){
                     origs.push(createOrigImage(data[k].pack.cleaned[i][0], data[k].pack.cleaned[i][1], 'data:image/png;base64,' + data[k].pack.cleaned[i][2], i))
                 }
                 original_arr[k] = origs;
             }
-
+            length = Object.keys(images).length;
+            $("#counter").html((current + 1) + " / " + length);
             var src = document.getElementById("menu");
             for(var i in original_arr[0]){
                 var myNewElement = $("<li><input class = \"origs\" type=\"checkbox\" id=\"" + i + "\"/><label for=\"" + i + "\"><img src=\"" + original_arr[0][i][2].src + "\"/></label></li>");
