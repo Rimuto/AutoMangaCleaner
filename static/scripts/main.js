@@ -3,7 +3,7 @@ $(document).ready(function() {
     const element = document.getElementById('panzoom')
     panzoom(element, {
         maxZoom: 10,
-        minZoom: 0.5,
+        minZoom: 0.1,
         zoomDoubleClickSpeed: 1,
         onDoubleClick: function(e) {
             return false;
@@ -555,6 +555,7 @@ var canvases = [];
 var original_arr = {};
 var current = 0;
 var max = 0;
+var first_time = true;
 
 function isObjectEmpty(value) {
      return (
@@ -587,12 +588,11 @@ $('#save_raw').on({
             for (var i in images){
                 zip.file("ready" + i +".png", images[i].src.split(',')[1], {base64: true})
             }
-            zip.generateAsync({type:"base64"}).then(function (base64) {
-                window.location = "data:application/zip;base64," + base64;
+            zip.generateAsync({type:"blob"}).then(function (blob) { // 1) generate the zip file
+                saveAs(blob, "ready.zip");                          // 2) trigger the download
             }, function (err) {
-                jQuery("#data_uri").text(err);
+                jQuery("#blob").text(err);
             });
-            delete(zip);
         }
     }
 });
@@ -609,18 +609,16 @@ $('#save_all').on({
             for (var i in canvas_arr){
                 zip.file("ready" + i +".png", img_arr[i].split(',')[1], {base64: true})
             }
-            zip.generateAsync({type:"base64"}).then(function (base64) {
-                window.location = "data:application/zip;base64," + base64;
+            zip.generateAsync({type:"blob"}).then(function (blob) {
+                saveAs(blob, "ready.zip");
             }, function (err) {
-                jQuery("#data_uri").text(err);
+                jQuery("#blob").text(err);
             });
-            delete(zip);
         }
     }
 });
 /*for the save*/
 function shift(){
-    canvas.clear();
     if (current in original_arr){
         $("#menu").empty();
         for(var i in original_arr[current]){
@@ -752,14 +750,6 @@ canvas.on('mouse:out', function () {
     }
 });
 
-canvas.on('after:render', function (evt) {
-    $("#next").css("pointer-events","auto");
-    $("#prev").css("pointer-events","auto");
-});
-canvas.on('before:render', function (evt) {
-    $("#next").css("pointer-events","none");
-    $("#prev").css("pointer-events","none");
-});
 $('#draw').on({
     'click': function(){
         canvas.isDrawingMode = !canvas.isDrawingMode;
@@ -924,35 +914,34 @@ $('#upload-file').change(function() {
         contentType: false,
         cache: false,
         processData: false,
-        success: function(data) {
-            images = [];
+        success: function(data){
             for(var k in data) {
                 images.push(createImage('data:image/png;base64,' + data[k].pack.img, k));
-                //Создать канвас на хтмл
-                //Залить на этот канвас бэкграунд
-                //запушить в список канвасов
-                //повторить
-
-                max = Number(k);
                 origs= [];
                 for(var i in data[k].pack.cleaned){
                     origs.push(createOrigImage(data[k].pack.cleaned[i][0], data[k].pack.cleaned[i][1], 'data:image/png;base64,' + data[k].pack.cleaned[i][2], i))
                 }
-                original_arr[k] = origs;
+                original_arr[Object.keys(images).length - 1] = origs;
+                max = Object.keys(images).length - 1;
             }
             length = Object.keys(images).length;
             $("#counter").html((current + 1) + " / " + length);
-            var src = document.getElementById("menu");
-            for(var i in original_arr[0]){
-                var myNewElement = $("<li><input class = \"origs\" type=\"checkbox\" id=\"" + i + "\"/><label for=\"" + i + "\"><img src=\"" + original_arr[0][i][2].src + "\"/></label></li>");
-                myNewElement.appendTo('#menu')
+            if (first_time){
+                first_time = false;
+                shift();
             }
-            console.log($("input[class='origs']").length)
-            fabric.Image.fromURL(images[0].src, function(img) {
-                 canvas.setDimensions({width:img.width, height:img.height});
-                 cursor.setDimensions({width:img.width, height:img.height});
-                 canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
-            });
+
+//            var src = document.getElementById("menu");
+//            for(var i in original_arr[0]){
+//                var myNewElement = $("<li><input class = \"origs\" type=\"checkbox\" id=\"" + i + "\"/><label for=\"" + i + "\"><img src=\"" + original_arr[0][i][2].src + "\"/></label></li>");
+//                myNewElement.appendTo('#menu')
+//            }
+//            console.log($("input[class='origs']").length)
+//            fabric.Image.fromURL(images[0].src, function(img) {
+//                 canvas.setDimensions({width:img.width, height:img.height});
+//                 cursor.setDimensions({width:img.width, height:img.height});
+//                 canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
+//            });
         },
     });
 });
