@@ -338,6 +338,10 @@ $("#group").on('click', function() {
             objectsInGroup.forEach(function(object) {
                 canvas.remove(object);
             });
+//            newgroup.set({
+//                originX: "center",
+//                originY: "center"
+//            });
             canvas.add(newgroup);
         });
     }
@@ -367,21 +371,28 @@ $("#ungroup").click(function(){
 
 $("#mk-bg").click(function(){
     var activeObject = canvas.getActiveObject();
-    if(activeObject){
-        if(activeObject.type=="group"){
-            activeObject.set({
-                selectable: false
-            });
-        }
-        else{
-            var items = activeObject._objects;
-            for(var i = 0; i < items.length; i++) {
-                items[i].set({
+    if(confirm("Это дйествие не обратимо! Все выделенные объекты станут частью фона. Выполнить?")){
+        if(activeObject){
+            if(activeObject.type=="group"){
+                activeObject.set({
                     selectable: false
                 });
             }
+            else if(activeObject._objects){
+                var items = activeObject._objects;
+                for(var i = 0; i < items.length; i++) {
+                    items[i].set({
+                        selectable: false
+                    });
+                }
+            }
+            else{
+                activeObject.set({
+                    selectable: false
+                });
+            }
+            canvas.discardActiveObject().renderAll();
         }
-        canvas.discardActiveObject().renderAll();
     }
 });
 
@@ -907,6 +918,7 @@ $(document).on('change', '.origs', function(){
 
 $('#upload-file').change(function() {
     var form_data = new FormData($('#upload-file')[0]);
+    document.getElementById("loader").classList.add("loader");
     $.ajax({
         type: 'POST',
         url: '/uploadajax',
@@ -915,6 +927,7 @@ $('#upload-file').change(function() {
         cache: false,
         processData: false,
         success: function(data){
+            document.getElementById("loader").classList.remove("loader");
             for(var k in data) {
                 images.push(createImage('data:image/png;base64,' + data[k].pack.img, k));
                 origs= [];

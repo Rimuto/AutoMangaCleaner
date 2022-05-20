@@ -48,6 +48,7 @@ input[type="file"] {
     display: none;
 }
 .custom-file-upload {
+    background: var(--background-tools);
     border: 1px solid #ccc;
     display: flex;
     justify-content: center;
@@ -111,7 +112,7 @@ input[type="file"] {
     margin: 1px;
 }
 #txt-cntrl-1{
-    min-width: 320px;
+    min-width: 335px;
 }
 #txt-cntrl-2{
     min-width: 155px;
@@ -290,18 +291,15 @@ input[type="file"] {
   display: flex;
   align-items: center;
   justify-content: center;
+  min-width: 170px;
 
 }
 #footer-1, #footer-3{
     justify-content: flex-start;
     max-width: 350px;
-    min-width: 300px;
+    min-width: 150px;
 }
-#footer-3{
-    justify-content: flex-end;;
-    max-width: 350px;
-    min-width: 300px;
-}
+
 #footer-1 *, #footer-3 * {
     margin-right: 5px;
     margin-left: 5px;
@@ -482,4 +480,28 @@ body > .group{
 
 #cursor {
   pointer-events: none!important;
+}
+
+
+
+.loader {
+  border: 4px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 4px solid blue;
+  border-right: 4px solid green;
+  border-bottom: 4px solid red;
+  width: 15px;
+  height: 15px;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
