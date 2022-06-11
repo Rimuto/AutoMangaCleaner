@@ -3,7 +3,6 @@ from flask import Flask, request, redirect, url_for, render_template, send_from_
 import detect
 import cv2
 import clean
-#from pyfladesk import init_gui
 
 import base64
 import numpy as np
@@ -12,7 +11,7 @@ labelsPath = "YOLOv4/obj.names"
 cfgpath = "YOLOv4/yolov4-obj.cfg"
 wpath = "YOLOv4/yolov4-obj_final.weights"
 
-application  = Flask(__name__)
+application = Flask(__name__)
 application.config["SECRET_KEY"] = "SECRET_KEY"
 DOWNLOAD_FOLDER = os.path.dirname(os.path.abspath(__file__)) + '\\downloads\\'
 application.config['DOWNLOAD_FOLDER'] = DOWNLOAD_FOLDER
@@ -21,10 +20,11 @@ ALLOWED_EXTENSIONS = {'jpg', 'png'}
 CFG = detect.config(cfgpath)
 Weights = detect.weights(wpath)
 nets = detect.load_model(CFG, Weights)
-#new comment for deploy heroku2
+
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 def get_base64_encoded_image(image_path):
     with open(image_path, "rb") as img_file:
@@ -35,11 +35,12 @@ def get_path(filename):
     return os.path.join("./" + filename)
 
 
-@application.route("/uploadajax", methods=[ "GET",'POST'])
+@application.route("/uploadajax", methods=["GET", 'POST'])
 def uploadajax():
     files = request.files.getlist("file")
     data = {}
-    for i, file in zip(range(len(files)),files):
+    for i, file in zip(range(len(files)), files):
+        filename, file_extension = os.path.splitext(file.filename)
         if file.filename == '':
             print('No file selected')
             return redirect(request.url)
@@ -60,8 +61,7 @@ def uploadajax():
                 img[y: y + h, x: x + w] = cleaned
 
             retval, buffer_img = cv2.imencode('.png', img)
-            data[i] = {"pack": {"cleaned": cl, "img": base64.b64encode(buffer_img).decode('utf-8')}}
-            #data[i] = {"img": base64.b64encode(buffer_img).decode('utf-8')}
+            data[i] = {"pack": {"cleaned": cl, "img": base64.b64encode(buffer_img).decode('utf-8'), "ext": file_extension}}
     return data
 
 
@@ -69,9 +69,10 @@ def uploadajax():
 def index():
     return render_template("index.html")
 
+
 def start_server():
     application.run()
 
+
 if __name__ == '__main__':
-    #init_gui(app, width=300, height=400,)
     application.run(host='0.0.0.0')

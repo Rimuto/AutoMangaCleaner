@@ -562,6 +562,7 @@ var createOrigImage = function(x, y, src, title) {
 var images = [];
 var canvas_arr = {};
 var img_arr = {};
+var ext_arr = [];
 var canvases = [];
 var original_arr = {};
 var current = 0;
@@ -582,10 +583,10 @@ $('#save').on({
         //creating an invisible element
         var element = document.createElement('a');
         element.setAttribute('href', canvas.toDataURL({
-            format: 'png',
+            format: ext_arr[current],
             quality: 1.0
         }));
-        element.setAttribute('download', 'ready.png');
+        element.setAttribute('download', 'ready' + ext_arr[current]);
         document.body.appendChild(element);
         element.click();
         document.body.removeChild(element);
@@ -597,7 +598,7 @@ $('#save_raw').on({
             var zip = new JSZip();
             //creating an invisible element
             for (var i in images){
-                zip.file("ready" + i +".png", images[i].src.split(',')[1], {base64: true})
+                zip.file("ready" + i + ext_arr[i], images[i].src.split(',')[1], {base64: true})
             }
             zip.generateAsync({type:"blob"}).then(function (blob) { // 1) generate the zip file
                 saveAs(blob, "ready.zip");                          // 2) trigger the download
@@ -614,11 +615,11 @@ $('#save_all').on({
         if (Object.keys(canvas_arr).length > 1){
             var zip = new JSZip();
             img_arr[current] = canvas.toDataURL({
-                format: 'png',
+                format: ext_arr[current],
                 quality: 1.0
             });
             for (var i in canvas_arr){
-                zip.file("ready" + i +".png", img_arr[i].split(',')[1], {base64: true})
+                zip.file("ready" + i + ext_arr[i], img_arr[i].split(',')[1], {base64: true})
             }
             zip.generateAsync({type:"blob"}).then(function (blob) {
                 saveAs(blob, "ready.zip");
@@ -656,14 +657,14 @@ function shift(){
             canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
         });
         canvas_arr[current] = canvas.toObject(['name', 'selectable', 'evented']);
-        img_arr[current] = canvas.toDataURL('png');
+        img_arr[current] = canvas.toDataURL(ext_arr[current]);
     }
     canvas.renderAll();
 }
 
 function next(){
    if (Object.keys(images).length > 1){
-        img_arr[current] = canvas.toDataURL('png');
+        img_arr[current] = canvas.toDataURL(ext_arr[current]);
         canvas_arr[current] = canvas.toObject(['name', 'selectable', 'evented']);
         if (current + 1 > max){
             current = 0
@@ -678,7 +679,7 @@ function next(){
 function prev(){
     if (Object.keys(images).length > 1){
         canvas_arr[current] = canvas.toObject(['name', 'selectable', 'evented']);
-        img_arr[current] = canvas.toDataURL('png');
+        img_arr[current] = canvas.toDataURL(ext_arr[current]);
         if (current - 1 < 0){
             current = max
         } else {
@@ -929,10 +930,11 @@ $('#upload-file').change(function() {
         success: function(data){
             document.getElementById("loader").classList.remove("loader");
             for(var k in data) {
-                images.push(createImage('data:image/png;base64,' + data[k].pack.img, k));
+                images.push(createImage('data:image/' + data[k].pack.ext + ';base64,' + data[k].pack.img, k));
+                ext_arr.push(data[k].pack.ext);
                 origs= [];
                 for(var i in data[k].pack.cleaned){
-                    origs.push(createOrigImage(data[k].pack.cleaned[i][0], data[k].pack.cleaned[i][1], 'data:image/png;base64,' + data[k].pack.cleaned[i][2], i))
+                    origs.push(createOrigImage(data[k].pack.cleaned[i][0], data[k].pack.cleaned[i][1], 'data:image/' + ext_arr[current] + ';base64,' + data[k].pack.cleaned[i][2], i))
                 }
                 original_arr[Object.keys(images).length - 1] = origs;
                 max = Object.keys(images).length - 1;
