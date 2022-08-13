@@ -78,8 +78,23 @@ def remove(image):
     gray = get_grayscale(image)
     g = adaptive_thresholding(gray)
     g = cv2.erode(g, np.ones((3, 3)), iterations=1)
-    contours, f = cv2.findContours(g, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    contours, f = cv2.findContours(g, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)#cv2.RETR_EXTERNAL
     cnts = sorted(contours, key=cv2.contourArea, reverse=True)[:3]
+    if cv2.contourArea(cnts[0]) >= image.shape[0] * image.shape[1] * 0.95:
+        cnts[0] = cnts[2]
+    if cv2.contourArea(cnts[0]) <= image.shape[0] * image.shape[1] * 0.30:
+        print("gumba!")
+        g = cv2.erode(g, np.ones((3, 3)), iterations=3)
+        contours, f = cv2.findContours(g, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)  # cv2.RETR_EXTERNAL
+        cnts = sorted(contours, key=cv2.contourArea, reverse=True)[:3]
+
+    print("/////////////")
+    print(image.shape[0] * image.shape[1])
+    for i in cnts:
+        print(cv2.contourArea(i))
+    #cv2.drawContours(image, cnts, 0, (0, 255, 0), 3)
+    #cv2.imwrite(r"C:\Users\Rimuto\Desktop\preprocessing\image.png", image)
+
     mask = np.zeros([g.shape[0], g.shape[1]], dtype='uint8')
 
     cv2.fillPoly(mask, [cnts[0]], (255, 255, 255))

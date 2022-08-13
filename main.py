@@ -8,14 +8,14 @@ import base64
 import numpy as np
 
 labelsPath = "YOLOv4/obj.names"
-cfgpath = "YOLOv4/yolov4-obj.cfg"
-wpath = "YOLOv4/yolov4-obj_final.weights"
+cfgpath = "YOLOv4/yolov4-tiny-obj.cfg"
+wpath = "YOLOv4/yolov4-tiny-obj_best.weights"
 
 application = Flask(__name__)
 application.config["SECRET_KEY"] = "SECRET_KEY"
 DOWNLOAD_FOLDER = os.path.dirname(os.path.abspath(__file__)) + '\\downloads\\'
 application.config['DOWNLOAD_FOLDER'] = DOWNLOAD_FOLDER
-ALLOWED_EXTENSIONS = {'jpg', 'png'}
+ALLOWED_EXTENSIONS = {'jpg', 'png', 'jpeg'}
 
 CFG = detect.config(cfgpath)
 Weights = detect.weights(wpath)
