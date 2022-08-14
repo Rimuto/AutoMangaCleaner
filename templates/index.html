@@ -14,6 +14,12 @@
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
     <link rel="stylesheet" type="text/css"  href="{{ url_for('static',filename='styles/style.css') }}">
+
+    <!-- Localize -->
+    <script src="https://cdn.jsdelivr.net/npm/i18next@21.6.10/i18next.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-i18next@1.2.1/jquery-i18next.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/i18next-browser-languagedetector@6.1.3/i18nextBrowserLanguageDetector.min.js"></script>
+    <script defer src="{{ url_for('static',filename='scripts/i18n.js') }}"></script>
 </head>
 <body>
 <div class = "box">
@@ -21,39 +27,39 @@
         <div class="sample-toolbar">
             <div class = "upload_area">
             <form id="upload-file" method="post" enctype="multipart/form-data" multiple="" >
-                    <label for = "fileup" class = "rainbow-box custom-file-upload">Select a file</label>
+                    <label for = "fileup" class = "rainbow-box custom-file-upload" data-i18n="menu.selectFile"></label>
                     <input id = "fileup" name="file" type="file" multiple="">
             </form>
-            <label for="font-input" class = "rainbow-box custom-file-upload">Upload font file</label>
+            <label for="font-input" class = "rainbow-box custom-file-upload" data-i18n="menu.uploadFontFile"></label>
             <input type="file" id="font-input" value = "Upload fonts"/>
 
-            <input class = "btn" type="button" id = "toggle" value = "Toggle theme"/>
+            <input class = "btn" type="button" id = "toggle" data-i18n="[value]button.toggleTheme" />
                 <div id="loader"></div>
 
-            <a href="https://forms.gle/847JnQbsEF1RTejk9" target="_blank">Обратная связь</a>
-            <a href="https://drive.google.com/drive/folders/1gkuro8jwjp3dOyFT8uhHK97L_EH-HFpv?usp=sharing" style = "margin-left: 10px" target="_blank">Версия для Windows</a>
-            <a href="https://youtu.be/hm2Fc7ngMe4" style = "margin-left: 10px" target="_blank">Видео инструкция</a>
+            <a target="_blank" data-i18n="[href]menu.feedbackLink;menu.feedback;"></a>
+            <a href="https://drive.google.com/drive/folders/1gkuro8jwjp3dOyFT8uhHK97L_EH-HFpv?usp=sharing" style = "margin-left: 10px" target="_blank" data-i18n="menu.windows"></a>
+            <a href="https://youtu.be/hm2Fc7ngMe4" style = "margin-left: 10px" target="_blank" data-i18n="menu.videoTutorial"></a>
         </div>
             <div class = "control_area">
                 <div class = "text-controls">
                     <div id = "txt-cntrl-1">
                         <div>
-                            <label class = "label" for="font-family">Font:</label>
+                            <label class = "label" for="font-family" data-i18n="label.font"></label>
                             <select id="font-family"></select>
-                            <input class = "btn" type="button" id = "apply-font" value="Apply" />
+                            <input class = "btn" type="button" id = "apply-font" data-i18n="[value]button.apply"  />
                         </div>
                         <div>
-                            <label class = "label" for="text-font-size">Size:</label>
+                            <label class = "label" for="text-font-size" data-i18n="label.size"></label>
                             <input type="number" min="1" max="120" id="text-font-size" value="21">
                         </div>
                     </div>
                     <div id = "txt-cntrl-2">
                         <div>
-                            <label class = "label" for="lineHeight">Height:</label>
+                            <label class = "label" for="lineHeight" data-i18n="label.height"></label>
                             <input id = "lineHeight" type="number" min="0.1" max="10" id="text-line-spacing" step="0.1" value="1">
                         </div>
                         <div>
-                            <label class = "label" for="text-color">Color:</label>
+                            <label class = "label" for="text-color" data-i18n="label.color"></label>
                             <input type="color" id="text-color" size="15">
                         </div>
                     </div>
@@ -73,32 +79,32 @@
                 </div>
                 <div class = "elements-control">
                     <div id = "el-cntrl-1">
-                        <input class="btn" type="button" id = "delete" value="Delete" />
-                        <input class="btn" type="button" id = "add" value="Add" />
-                        <input class="lng-btn" type="button" id = "toFront" value = "To the foreground">
+                        <input class="btn" type="button" id="delete" data-i18n="[value]button.delete" />
+                        <input class="btn" type="button" id = "add" data-i18n="[value]button.add" />
+                        <input class="lng-btn" type="button" id = "toFront" data-i18n="[value]button.foreground" >
                     </div>
                     <div id = "el-cntrl-2">
-                        <input class="btn" type="button" id = "group" value="Group" />
-                        <input class="btn" type="button" id = "ungroup" value="Ungroup" />
-                        <input class="lng-btn" type="button" id = "mk-bg" value="As a background"/>
+                        <input class="btn" type="button" id = "group" data-i18n="[value]button.group" />
+                        <input class="btn" type="button" id = "ungroup" data-i18n="[value]button.ungroup" />
+                        <input class="lng-btn" type="button" id = "mk-bg" data-i18n="[value]button.background" />
                     </div>
                     <div id = "el-cntrl-3">
-                        <label class = "label" for="angle">Angle:</label>
+                        <label class = "label" for="angle" data-i18n="label.angle"></label>
                         <input type="number" min="-360" max="360" id="angle" value="0">
-                        <input class="btn" type="button" id = "fix" value="Fix position" />
+                        <input class="btn" type="button" id = "fix"  data-i18n="[value]button.fixPosition" />
                     </div>
                 </div>
                 <div class = "brush-control">
                     <div>
                         <div>
                             <center>
-                                <input class = "btn" type="button" id = "draw" value="Drawing Mode" />
+                                <input class = "btn" type="button" id = "draw" data-i18n="[value]button.drawingMode" />
                             </center>
                         </div>
                         <div >
-                            <label class = "label" for="brush-size">Size:</label>
+                            <label class = "label" for="brush-size" data-i18n="label.size"></label>
                             <input type="number" min="1" max="120" id="brush-size" value="10">
-                            <label class = "label" for="brush-color">Color:</label>
+                            <label class = "label" for="brush-color" data-i18n="label.color"></label>
                             <input type="color" id="brush-color" size="15">
                         </div>
                     </div>
@@ -121,16 +127,16 @@
     </div>
     <div class = "row-footer">
         <div id = "footer-1">
-            <input class = "btn" type = "button" id = "save_raw" value = "Save raw images">
+            <input class = "btn" type = "button" id = "save_raw" data-i18n="[value]button.saveRaw">
         </div>
         <div id = "footer-2">
             <button class = "nxt-prv" id = "prev"><i class="hov bi bi-arrow-left-square"></i></button>
-            <lebel class = "counter" id = "counter">0 / 0</lebel>
+            <label class = "counter" id = "counter">0 / 0</label>
             <button class = "nxt-prv" id = "next"><i class="hov bi bi-arrow-right-square"></i></button>
         </div>
         <div id = "footer-3">
-            <input class="btn" type = "button" id = "save" value = "Save current">
-            <input class = "btn" type = "button" id = "save_all" value = "Save processed">
+            <input class="btn" type = "button" id = "save" data-i18n="[value]button.saveCurrent">
+            <input class = "btn" type = "button" id = "save_all" data-i18n="[value]button.saveProcessed">
         </div>
     </div>
 </div>
