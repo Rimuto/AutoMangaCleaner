@@ -9,7 +9,7 @@ $(function () {
     // for all options read: https://www.i18next.com/overview/configuration-options
     .init({
       debug: false,
-      fallbackLng: 'ru',
+      fallbackLng: 'en',
       resources: {
         en: {
             translation: {
